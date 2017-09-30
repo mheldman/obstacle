@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
+
 '''
 Discretizes the 2D Poission problem u'' = f on the square region Omega = [a,b]x[a,b].
 Required inputs are m, the number of unknowns on a 1D slice of the region, and f, which should be a real-valued function defined on Omega.
 Optional inputs are a and b, which define Omega, g, which defines the boundary values, and psi, which defines the obstacle if solving an obstacle problem.
-The grid spacing in x and y is (b - a)/(m + 1).
+The grid spacing in x and y is (b - a)/(m + 1). The discreization defined here constructs the system of equations U[i] = F[i] for points (x, y) on the boundary of Omega (i.e. x = pm 1 or y = pm 1), in which case F[i] is defined to be g(x, y), and (U[i - 1] + U[i + 1] + U[i + m + 2] + U[i - m - 2\ - 4U[i])/h^2 if U[i] does not represent a boundary point.
+Note that this function sets up, but does not solve, the system of equations.
 '''
+
+import numpy as np
 
 psi = lambda x,y: -np.inf
 g = lambda x,y: 0
