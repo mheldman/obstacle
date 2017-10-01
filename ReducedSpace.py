@@ -23,9 +23,8 @@ def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta 
     A = F(xk)
     FO = Fomega(A, xk)
     pik = pi(x0)
-    while np.linalg.norm(FO) > tol and k < 100:  # might use ||[x1*F1, x2*F2, ..., xn*Fn]||_inf
+    while np.linalg.norm(FO, np.inf) > tol and k < 100:  # might use ||[x1*F1, x2*F2, ..., xn*Fn]||_inf
         k += 1
-        print(k, xk)
         Axk = []
         Ixk = []
         for i in range(0, n):
@@ -72,5 +71,5 @@ def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta 
         xk = pik
         A = F(xk)
         FO = Fomega(A, xk)
-    print('\n', 'xk =', xk, '\n', 'F(xk) =', F(xk), '\n', 'F(xk)*xk =', np.dot(np.transpose(F(xk)), xk))
+    print('\n', 'F(xk)*xk =', np.dot(np.transpose(F(xk)), xk))
     return xk

@@ -8,6 +8,7 @@ from blockprint import*
 def obstacleqp(psi, m, f, g, a = -1.0, b = 1.0):
   A, U, P, F, X = Poisson2D(m, f, a = a, b = b, psi = psi, g = g)
   blockPrint()
+  N = m**2
   sol = solvers.qp(matrix(-A), matrix(F), matrix(-np.identity(N)), matrix(-P), initvals = matrix(U))
   U = sol['x']
   enablePrint()
