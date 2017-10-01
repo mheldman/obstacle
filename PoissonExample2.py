@@ -6,17 +6,16 @@ import numpy as np
 from Poisson2D import Poisson2D
 
 f = lambda x,y: -8.0*(np.pi**2)*np.sin(2.0*np.pi*x)*np.sin(2.0*np.pi*y)
-m = 150
-A, U, F, P, X = Poisson2D(m,f,bvals = True)
-Uexact = np.zeros(((m+2)**2,1))
-h = 2/(m + 1)
-U = np.linalg.solve(A,F)
+m = 50
+A, U, P, F, X = Poisson2D(m, f)
+Uexact = np.zeros((m**2,1))
+h = 2 / (m + 1)
+U = np.linalg.solve(A, F)
 uexact = lambda x,y: np.sin(2.0*np.pi*x)*np.sin(2.0*np.pi*y)
 
-kk = lambda i,j: j * (m + 2) + i
-for j in range(0, m + 2):
-    for i in range(0, m + 2):
+kk = lambda i, j: j * m + i
+for j in range(0, m):
+    for i in range(0, m):
         k = kk(i,j)
-        Uexact[k] = uexact(X[i],X[j])
-
+        Uexact[k] = uexact(X[i], X[j])
 print(np.linalg.norm(Uexact - U, np.inf))
