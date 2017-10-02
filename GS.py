@@ -1,7 +1,7 @@
 import numpy as np
 
-def gs(U, A, F, m, maxiters = 3, tol = 10**-8, P = None):
-    if type(P) == None:
+def gs(U, A, F, m, maxiters = 3, tol = 10**-8, P = []):
+    if len(P) == 0:
         for j in range(0,maxiters):
             r = F - np.dot(A,U)
             if np.linalg.norm(r, np.inf) < tol:

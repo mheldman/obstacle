@@ -1,7 +1,9 @@
 import numpy as np
 from numpy import zeros
+from GS import gs
+from Poisson2D import Poisson2D
 
-def interpolate(U, m, F = zeros(1)):
+def interpolate(U, m, F = zeros((1,1))):
     N = (m + 2)**2
     I = zeros(((2*m + 3)**2, N))
     A = zeros((2*m + 3, m + 2))
@@ -21,14 +23,15 @@ def interpolate(U, m, F = zeros(1)):
         else:
             n = int(i/2)
             I[i*(2*m + 3):(2*m + 3)*(i + 1), n*(m + 2):n*(m + 2) + 2*m + 4] = B
-    U = np.dot(I,U) / 4.0
-    U[[F[k] != 0]] = F[[F[k] != 0]]
+    U = np.dot(I, U) / 4.0
+    for k in range(0, len(F)):
+        if F[k] != 0:
+            U[k] = F[k]
     return U
 
 
-def restrict(U, m, F = zeros(1)):
-    n = np.floor(m / 2)
-    n = int(n)
+def restrict(U, m, F = zeros((1,1))):
+    n = int((m - 1) / 2)
     N = (m + 2) ** 2
     A = np.zeros((n + 2, 3 * (m + 2)))
     I = np.zeros(((n + 2) ** 2, N))
@@ -39,24 +42,34 @@ def restrict(U, m, F = zeros(1)):
     for i in range(0, n):
         I[(i + 1) * (n + 2):(i + 2) * (n + 2), (2 * i + 1) * (m + 2):(2 * (i + 1) + 2) * (m + 2)] = A
     U = np.dot(I, U) / 16.0
-    k = 0
-    U[[F[k] != 0]] = F[[F[k] != 0]]
+    for k in range(0, len(F)):
+        if F[k] != 0:
+            U[k] = F[k]
     return U
 
-def vcycle(m, U, A, F, minm = 25, eta1 = 3, eta2 = 3, numcycles = 5,cyclenum = 0, v = None):
-    vh = gs(U, A, F, m, maxiters = eta1)
-    print(vh.shape)
-    print(m,cyclenum)
+def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = []):
+    if cyclenum == 0:
+        vlist.append(F)
+    f = lambda x, y: x*0
     if cyclenum < numcycles:
-        rh = F - np.dot(A,vh)
-        rh = restrict(rh,m)
-        m = int(np.floor(m/2))
-        eh = np.zeros(((m+2)**2,1))
+        vh = gs(U, A, F, (m + 2) ** 2, maxiters=eta1)
+        vlist.append(vh)
+        rh = F - np.dot(A, vh)
+        rh = restrict(rh, m)
+        m = int((m - 1) / 2)
+        eh = np.zeros(((m+2)**2, 1))
+        A, U, F, P, X = Poisson2D(m, f, bvals = True)
         cyclenum += 1
-        A, U, F, X = obstacle2D(m,f)
-        eh = vcycle(m, eh, A, rh, cyclenum = cyclenum, numcycles = numcycles, v = vh)
+        eh = vcycle(m, eh, A, rh, eta1 = eta1, eta2 = eta2, numcycles = numcycles, cyclenum = cyclenum, vlist = vlist)
         return eh
-    vh = v + interpolate(vh,m)
-    vh = gs(U, A, F, m, maxiters = eta2)
+    vh = np.linalg.solve(A, F)
+    vlist.reverse()
+    for i in range(0, numcycles):
+        vh = vlist[i] + interpolate(vh, m)
+        m = 2 * m + 1
+    A, U, F, P, X = Poisson2D(m, f, bvals = True)
+    vh = gs(vh, A, vlist[-1], (m + 2)**2, maxiters = eta2)
     return vh
 
+def fmg(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = []):
+    pass

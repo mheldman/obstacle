@@ -73,3 +73,4 @@ def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta 
         FO = Fomega(A, xk)
     print('\n', 'F(xk)*xk =', np.dot(np.transpose(F(xk)), xk))
     return xk
+
