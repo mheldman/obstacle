@@ -5,7 +5,7 @@ from blockprint import*
 from time import time
 from mpl_toolkits.mplot3d import Axes3D
 
-m = 100
+m = 40
 Alpha = .68026
 Beta = .47152
 psi = lambda x,y: np.sqrt(np.maximum(0.0, 1 - x**2 - y**2)) + np.minimum(0.0,1-x**2-y**2)
@@ -67,6 +67,7 @@ surf2 = ax1.plot_surface(A,B,Z1,color = 'g',vmin = 0.0, vmax = 5.1, alpha = .5)
 ax1.set_zlim3d(0,1)
 ax1.set_xlim3d(-2,2)
 ax1.set_ylim3d(-2,2)
+plt.show()
 
 fig2 = plt.figure()
 ax2 = fig2.gca(projection = '3d')
@@ -75,6 +76,7 @@ surf4 = ax2.plot_surface(A, B, Z2,color = 'g',vmin = 0.0, vmax = 5.1, alpha = .5
 ax2.set_zlim3d(0,1)
 ax2.set_xlim3d(-2,2)
 ax2.set_ylim3d(-2,2)
+plt.show()
 
 fig3 = plt.figure()
 ax3 = fig3.gca(projection = '3d')
@@ -83,3 +85,4 @@ surf6 = ax3.plot_surface(A, B, Z3,color = 'g',vmin = 0.0, vmax = 5.1, alpha = .5
 ax3.set_zlim3d(0,1)
 ax3.set_xlim3d(-2,2)
 ax3.set_ylim3d(-2,2)
+plt.show()
