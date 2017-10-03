@@ -50,6 +50,7 @@ def restrict(U, m, F = zeros((1,1))):
 def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = []):
     if cyclenum == 0:
         vlist.append(F)
+    eh = np.zeros((2*m + 1, 1))
     f = lambda x, y: x*0
     if cyclenum < numcycles:
         vh = gs(U, A, F, (m + 2) ** 2, maxiters=eta1)
@@ -57,19 +58,31 @@ def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = 
         rh = F - np.dot(A, vh)
         rh = restrict(rh, m)
         m = int((m - 1) / 2)
-        eh = np.zeros(((m+2)**2, 1))
+        eh = np.zeros(((m + 2)**2, 1))
         A, U, F, P, X = Poisson2D(m, f, bvals = True)
         cyclenum += 1
         eh = vcycle(m, eh, A, rh, eta1 = eta1, eta2 = eta2, numcycles = numcycles, cyclenum = cyclenum, vlist = vlist)
-        return eh
     vh = np.linalg.solve(A, F)
     vlist.reverse()
     for i in range(0, numcycles):
-        vh = vlist[i] + interpolate(vh, m)
+        vh = eh + interpolate(vh, m)
         m = 2 * m + 1
     A, U, F, P, X = Poisson2D(m, f, bvals = True)
     vh = gs(vh, A, vlist[-1], (m + 2)**2, maxiters = eta2)
     return vh
 
-def fmg(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = []):
-    pass
+def fmg(m, fh, f, eta0 = 1, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, flist = []):
+
+    vh = np.zeros(((m + 2)**2, 1))
+    if cyclenum < numcycles:
+            fh = restrict(fh, m)
+            cyclenum += 1
+            m = int((m - 1) / 2)
+            vh = fmg(m, fh, f, eta0=eta0, eta1=eta1, eta2=eta2, numcycles=numcycles, cyclenum=cyclenum)
+            m = 2 * m + 1
+    A, U, F, P, X = Poisson2D(2*m + 1, f, bvals=True)
+    vh = interpolate(vh, m, F)
+    for i in range(eta0):
+        vh = vcycle(2*m + 1, vh, A, F, eta1 = eta1, eta2 = eta2, numcycles = numcycles - cyclenum + 1)
+    return vh
+
