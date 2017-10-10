@@ -47,19 +47,25 @@ def restrict(U, m, F = zeros((1,1))):
             U[k] = F[k]
     return U
 
-def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = []):
+def sweep(U, F, m, eta):
+    A, _, _, _, _ = Poisson2D(m, bvals=True)
+    U = gs(U, A, F, m, maxiters = eta)
+    rh = F - np.dot(A, U)
+    return U, rh, A
+
+def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = [], Alist = []):
     if cyclenum == 0:
-        vlist.append(F)
+        vlist.append(F) #vlist is the list of RHS vectors - first F (function values), the residuals
+    Alist.append(A)
+    N = (m + 2)**2
     eh = np.zeros((2*m + 1, 1))
-    f = lambda x, y: x*0
     if cyclenum < numcycles:
-        vh = gs(U, A, F, (m + 2) ** 2, maxiters=eta1)
+        vh, rh, A = sweep(U, F, N, eta1)
         vlist.append(vh)
-        rh = F - np.dot(A, vh)
         rh = restrict(rh, m)
         m = int((m - 1) / 2)
-        eh = np.zeros(((m + 2)**2, 1))
-        A, U, F, P, X = Poisson2D(m, f, bvals = True)
+        N = (m + 2)**2
+        eh = np.zeros((N, 1))
         cyclenum += 1
         eh = vcycle(m, eh, A, rh, eta1 = eta1, eta2 = eta2, numcycles = numcycles, cyclenum = cyclenum, vlist = vlist)
     vh = np.linalg.solve(A, F)
@@ -67,8 +73,9 @@ def vcycle(m, U, A, F, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, vlist = 
     for i in range(0, numcycles):
         vh = eh + interpolate(vh, m)
         m = 2 * m + 1
-    A, U, F, P, X = Poisson2D(m, f, bvals = True)
-    vh = gs(vh, A, vlist[-1], (m + 2)**2, maxiters = eta2)
+    N = (m + 2)**2
+    A, F = Alist[-1], vlist[-1]  #original RHS, A
+    vh = gs(vh, A, F, N, maxiters = eta2)
     return vh
 
 def fmg(m, fh, f, eta0 = 1, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, flist = []):
@@ -80,7 +87,7 @@ def fmg(m, fh, f, eta0 = 1, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0, fli
             m = int((m - 1) / 2)
             vh = fmg(m, fh, f, eta0=eta0, eta1=eta1, eta2=eta2, numcycles=numcycles, cyclenum=cyclenum)
             m = 2 * m + 1
-    A, U, F, P, X = Poisson2D(2*m + 1, f, bvals=True)
+    A, U, F, _, _ = Poisson2D(2*m + 1, f, bvals=True)
     vh = interpolate(vh, m, F)
     for i in range(eta0):
         vh = vcycle(2*m + 1, vh, A, F, eta1 = eta1, eta2 = eta2, numcycles = numcycles - cyclenum + 1)
