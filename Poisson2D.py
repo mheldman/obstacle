@@ -10,10 +10,12 @@ Note that this function sets up, but does not solve, the system of equations.
 
 import numpy as np
 
-psi = lambda x,y: -np.inf
-g = lambda x,y: 0
+psi = lambda x, y: -np.inf
+g = lambda x, y: 0
+f = lambda x, y: 0
 
-def Poisson2D(m, f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
+
+def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
     if not bvals: #specifies whether or not to explicitly include boundary values in the Poisson discretization
         N = m ** 2
         h = (b - a) / (m + 1)
@@ -82,14 +84,8 @@ def Poisson2D(m, f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
         for j in range(0, m + 2):
             for i in range(0, m + 2):
                 k = kk(i, j)
-                if j == 0:
-                    F[k] = g(X[i], a)
-                if j == m - 1:
-                    F[k] = g(X[i], b)
-                if i % m == 0:
-                    F[k] = g(a, X[j])
-                if (i + 1) % m == 0:
-                    F[k] = g(b, X[j])
+                if j == 0 or j == m + 1 or i % m == 0 or i % (m + 1) == 0:
+                    F[k] = g(X[i], X[j])
                 else:
                     F[k] = f(X[i], X[j])
                 P[k] = psi(X[i], X[j])

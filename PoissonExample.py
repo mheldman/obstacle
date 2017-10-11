@@ -7,7 +7,7 @@ from Poisson2D import Poisson2D
 
 f = lambda x,y: -8.0*(np.pi**2)*np.sin(2.0*np.pi*x)*np.sin(2.0*np.pi*y)
 m = 150
-A, U, F, P, X = Poisson2D(m,f,bvals = True)
+A, U, F, P, X = Poisson2D(m, f, bvals = True)
 Uexact = np.zeros(((m+2)**2,1))
 h = 2/(m + 1)
 U = np.linalg.solve(A,F)
