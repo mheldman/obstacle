@@ -51,8 +51,7 @@ def sweep(vh, fh, m, eta):
     A, _, _, _, _ = Poisson2D(m, bvals=True)
     N = (m + 2) ** 2
     vh = gs(vh, A, fh, N, maxiters = eta)
-    #rh = F - np.dot(A, U)
-    return vh #rh, A
+    return vh
 
 def vcycle(m, vh, A, fh, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0):
     if cyclenum < numcycles:
@@ -69,9 +68,7 @@ def vcycle(m, vh, A, fh, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0):
         return vh
     vh = vh + interpolate(v2h, m)
     m = 2*m + 1
-    N = (m+2)**2
-    A, _, _, _, _ = Poisson2D(m, bvals=True)
-    vh = gs(vh, A, fh, N, maxiters=eta2)
+    vh = sweep(vh, fh, m, eta2)
     return vh
 
 
