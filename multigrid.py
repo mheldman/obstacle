@@ -1,13 +1,15 @@
 import numpy as np
 from numpy import zeros
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
 from GS import gs
 from Poisson2D import Poisson2D
 
 def interpolate(U, m, F = zeros((1,1))):
     N = (m + 2)**2
-    I = zeros(((2*m + 3)**2, N))
-    A = zeros((2*m + 3, m + 2))
-    B = zeros((2*m + 3, 2*m + 4))
+    I = sparse.lil_matrix(((2*m + 3)**2, N))
+    A = np.zeros((2*m + 3, m + 2))
+    B = np.zeros((2*m + 3, 2*m + 4))
     for i in range(1, 2*m + 2):
         n = int(i/2)
         if i % 2 == 0:
@@ -23,7 +25,8 @@ def interpolate(U, m, F = zeros((1,1))):
         else:
             n = int(i/2)
             I[i*(2*m + 3):(2*m + 3)*(i + 1), n*(m + 2):n*(m + 2) + 2*m + 4] = B
-    U = np.dot(I, U) / 4.0
+    I = I.tocsr()
+    U = I.dot(U) / 4.0
     for k in range(0, len(F)):
         if F[k] != 0:
             U[k] = F[k]
@@ -33,15 +36,16 @@ def interpolate(U, m, F = zeros((1,1))):
 def restrict(U, m, F = zeros((1,1))):
     n = int((m - 1) / 2)
     N = (m + 2) ** 2
-    A = np.zeros((n + 2, 3 * (m + 2)))
-    I = np.zeros(((n + 2) ** 2, N))
+    A = zeros((n + 2, 3 * (m + 2)))
+    I = sparse.lil_matrix(((n + 2) ** 2, N))
     for i in range(0, n):
         A[i + 1, (2 * i + 1, 2 * i + 2, 2 * i + 3, 2 * i + m + 3,
                   2 * i + m + 4, 2 * i + m + 5, 2 * i + 2 * (m + 2) + 1, 2 * i +
                   2 * (m + 2) + 2, 2 * i + 2 * (m + 2) + 3)] = 1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0
     for i in range(0, n):
         I[(i + 1) * (n + 2):(i + 2) * (n + 2), (2 * i + 1) * (m + 2):(2 * (i + 1) + 2) * (m + 2)] = A
-    U = np.dot(I, U) / 16.0
+    I = I.tocsr()
+    U = I.dot(U) / 16.0
     for k in range(0, len(F)):
         if F[k] != 0:
             U[k] = F[k]
@@ -56,18 +60,18 @@ def sweep(vh, fh, m, eta):
 def vcycle(m, vh, A, fh, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0):
     if cyclenum < numcycles:
         vh = sweep(vh, fh, m, eta1)
-        f2h = restrict(fh - np.dot(A, vh), m)
+        f2h = restrict(fh - A.dot(vh), m)
         m = int((m - 1) / 2)
         N = (m + 2) ** 2
-        v2h = np.zeros((N,1))
+        v2h = np.zeros(N)
         cyclenum += 1
         A, _, _, _, _ = Poisson2D(m, bvals=True)
         v2h = vcycle(m, v2h, A, f2h, eta1 = 3, eta2 = 3, numcycles = numcycles, cyclenum = cyclenum)
     else:
-        vh = np.linalg.solve(A, fh)
+        vh = spsolve(A, fh)
         return vh
     vh = vh + interpolate(v2h, m)
-    m = 2*m + 1
+    m = 2 * m + 1
     vh = sweep(vh, fh, m, eta2)
     return vh
 
@@ -81,7 +85,7 @@ def fmg(m, fh, eta0 = 1, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0):
             vh = interpolate(v2h, m)
             m = 2 * m + 1
     else:
-        vh = np.zeros(((m + 2) ** 2, 1))
+        vh = zeros(((m + 2) ** 2, 1))
     A, _, _, _, _ = Poisson2D(m, bvals=True)
     vh = vcycle(m, vh, A, fh, eta1 = eta1, eta2 = eta2, numcycles = numcycles - cyclenum)
     return vh

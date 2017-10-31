@@ -9,7 +9,7 @@ Note that this function sets up, but does not solve, the system of equations.
 '''
 
 import numpy as np
-
+from scipy import sparse
 psi = lambda x, y: -np.inf
 g = lambda x, y: 0
 f = lambda x, y: 0
@@ -20,13 +20,13 @@ def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
         N = m ** 2
         h = (b - a) / (m + 1)
         X = np.linspace(a + h, b - h, m)
-        A = np.zeros((N, N))
-        F = np.zeros((N, 1))
-        G = np.zeros((N, 1))
-        U = np.zeros((N, 1))
-        P = np.zeros((N, 1))
-        T = np.zeros((m, m))
-        I = np.identity(m)
+        A = sparse.csr_matrix((N, N))
+        F = sparse.csr_matrix((N, 1))
+        G = sparse.csr_matrix((N, 1))
+        U = sparse.csr_matrix((N, 1))
+        P = sparse.csr_matrix((N, 1))
+        T = sparse.csr_matrix((m, m))
+        I = sparse.diags(np.ones(m), [0])
         for i in range(1, m - 1):
             T[i, (i - 1, i, i + 1)] = 1.0, -4.0, 1.0
         T[0, (0, 1)] = -4.0, 1.0
@@ -62,10 +62,10 @@ def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
         N = (m + 2) ** 2
         h = (b - a) / (m + 1)
         X = np.linspace(a, b, m + 2)
-        A = np.zeros((N, N))
-        F = np.zeros((N, 1))
-        P = np.zeros((N, 1))
-        U = np.zeros((N, 1))
+        A = sparse.lil_matrix((N, N))
+        F = np.zeros(N)
+        P = np.zeros(N)
+        U = np.zeros(N)
         T = np.zeros((m + 2, m + 2))
         I = np.zeros((m + 2, m + 2))
         I[1:m + 1, 1:m + 1] = np.identity(m) / h ** 2
@@ -90,4 +90,5 @@ def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
                     F[k] = f(X[i], X[j])
                 P[k] = psi(X[i], X[j])
                 U[k] = max(P[k], 0.0) #If psi is not defined by the user, U[k] defaults to the zero vector
+        A = A.tocsr()
         return A, U, F, P, X
