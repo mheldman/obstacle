@@ -10,14 +10,14 @@ psi = lambda x,y: np.sqrt(np.maximum(0.0, 1 - x**2 - y**2)) + np.minimum(0.0, 1 
 f = lambda x,y: x*0
 g = lambda x,y: -Alpha*np.log(np.sqrt(x**2 + y**2)) + Beta
 
-minm = 40
-numcycles = 0
+minm = 4
+numcycles = 4
 m = minm
 for i in range(0, numcycles):
     m = 2 * m + 1
-Ah, uh, bh, P, X = Poisson2D(m, f = f, psi=psi, a=-2.0, b=2.0, g = g, bvals = True)
-fh = bh - Ah.dot(P)
-uh = uh - P
+A, U, F, P, X = Poisson2D(m, f = f, psi=psi, a=-2.0, b=2.0, g = g, bvals = True)
+F = F - A.dot(P)
+U = U - P #use max(0.0, P) as an initial iterate for PFAS
 h = 4/(m+1)
 N = (m + 2)**2
 Uexact = np.zeros(N)
@@ -31,11 +31,9 @@ for j in range(m + 2):
             #print(U[k], Uexact[k], '(' + str(X[i]) + ',', str(X[j]) + ')')
         else:
             Uexact[k] = psi(X[i], X[j])
-U = Uexact - P
-#U = pfas(m, U, Ah, bh, numcycles = numcycles, cyclenum = 0, eta = 1)
-
-
-U = gs(U, Ah, fh, (m+2)**2, maxiters = 1, P = True)
+#U = Uexact - P #use exact solution as an initial iterate for PFAS
+U = pfas(m, U, A, F, numcycles = numcycles, cyclenum = 0, eta = 1)
+#U = gs(U, Ah, fh, (m+2)**2, maxiters = 1, P = True)
 U = U + P
 '''
 Uexact = np.zeros(N)
