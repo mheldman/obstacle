@@ -5,7 +5,7 @@ from blockprint import*
 from time import time
 from mpl_toolkits.mplot3d import Axes3D
 
-m = 40
+m = 30
 Alpha = .68026
 Beta = .47152
 psi = lambda x,y: np.sqrt(np.maximum(0.0, 1 - x**2 - y**2)) + np.minimum(0.0,1-x**2-y**2)

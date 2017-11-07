@@ -10,6 +10,7 @@ Note that this function sets up, but does not solve, the system of equations.
 
 import numpy as np
 from scipy import sparse
+from numpy import zeros, identity
 psi = lambda x, y: -np.inf
 g = lambda x, y: 0
 f = lambda x, y: 0
@@ -21,12 +22,12 @@ def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
         h = (b - a) / (m + 1)
         X = np.linspace(a + h, b - h, m)
         A = sparse.csr_matrix((N, N))
-        F = sparse.csr_matrix((N, 1))
-        G = sparse.csr_matrix((N, 1))
-        U = sparse.csr_matrix((N, 1))
-        P = sparse.csr_matrix((N, 1))
-        T = sparse.csr_matrix((m, m))
-        I = sparse.diags(np.ones(m), [0])
+        F = zeros(N)
+        G = zeros(N)
+        U = zeros(N)
+        P = zeros(N)
+        T = zeros((m, m))
+        I = identity(m)
         for i in range(1, m - 1):
             T[i, (i - 1, i, i + 1)] = 1.0, -4.0, 1.0
         T[0, (0, 1)] = -4.0, 1.0
@@ -56,7 +57,7 @@ def Poisson2D(m, f = f, a=-1.0, b=1.0, psi = psi, g = g, bvals = False):
                 if (i + 1) % m == 0:
                     G[k] += g(b, X[j])/h**2
         F = F - G
-        return A, U, P, F, X
+        return A, U, F, P, X
 
     else:
         N = (m + 2) ** 2

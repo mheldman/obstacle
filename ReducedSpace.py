@@ -3,7 +3,7 @@ from scipy.sparse.linalg import cg
 
 def Fomega(A, x):
     n = len(x)
-    y = np.zeros((n, 1))
+    y = np.zeros(n)
     y[[x > 0]] = A[[x > 0]]
     y[[x <= 0]] = np.minimum(A[[x <= 0]], 0.0)
     return y
@@ -16,7 +16,6 @@ def pi(x):
 
 
 def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta = .5, gamma = 10 ** -12):
-    errlist = []
     n = len(x0)
     k = 0
     xk = x0
@@ -32,14 +31,13 @@ def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta 
                 Axk.append(i)
             else:
                 Ixk.append(i)
-        d = np.zeros((n, 1))
+        d = np.zeros(n)
         temp = gradF(xk)
         m = len(Ixk)
         B = np.zeros((m, m))
         for i in range(0, m):
             for j in range(0, m):
                 B[i, j] = temp[Ixk[i], Ixk[j]]
-
         dIxk, info = cg(B, -A[Ixk], tol=10 ** -5)
         j = 0
         for i in Ixk:
@@ -71,6 +69,6 @@ def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta 
         xk = pik
         A = F(xk)
         FO = Fomega(A, xk)
-    print('\n', 'F(xk)*xk =', np.dot(np.transpose(F(xk)), xk))
+    print('\n', 'F(xk)*xk =', np.transpose(F(xk)).dot(xk))
     return xk
 

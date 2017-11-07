@@ -4,13 +4,14 @@ Example solution of the Poisson equation. The example uses the default settings 
 
 import numpy as np
 from Poisson2D import Poisson2D
+from scipy.sparse.linalg import spsolve
 
 f = lambda x,y: -8.0*(np.pi**2)*np.sin(2.0*np.pi*x)*np.sin(2.0*np.pi*y)
-m = 150
+m = 1000
 A, U, F, P, X = Poisson2D(m, f, bvals = True)
-Uexact = np.zeros(((m+2)**2,1))
+Uexact = np.zeros((m+2)**2)
 h = 2/(m + 1)
-U = np.linalg.solve(A,F)
+U = spsolve(A,F)
 uexact = lambda x,y: np.sin(2.0*np.pi*x)*np.sin(2.0*np.pi*y)
 
 kk = lambda i,j: j * (m + 2) + i

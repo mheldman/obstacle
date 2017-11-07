@@ -14,9 +14,9 @@ def obstacleqp(psi, m, f, g, a = -1.0, b = 1.0):
   enablePrint()
   return U
 
-def obstaclersp(psi, m, f, g, a = -1.0, b = 1.0):
-    A, U, P, F, X = Poisson2D(m, f, a = a, b = b, psi = psi, g = g)
-    L = lambda T: np.dot(-A, T + P) + F
+def obstaclersp(psi, m, f, g, a = -1.0, b = 1.0, bvals = True):
+    A, U, P, F, X = Poisson2D(m, f, a = a, b = b, psi = psi, g = g, bvals=bvals)
+    L = lambda T: -A.dot(T + P) + F
     dL = lambda U: -A
     U = reducedspace(L, dL, U)
     return U + P
