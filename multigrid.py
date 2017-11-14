@@ -16,18 +16,19 @@ class multigrid_solver:
     def __repr__(self):
         output = 'Multigrid solver\n'
         output += 'Number of levels = ' + str(len(self.levels)) + '\n'
-        output += 'Fine grid size (' + str((self.levels[0].m + 2)**2) + ', ' + str((self.levels[0].m + 2)**2) + ')\n'
-        output += str(self.levels[0].m**2) + ' fine grid unknowns\n'
-        output += 'Coarse grid size (' + str((self.coarse_m + 2)**2) + ', ' + str((self.coarse_m + 2)**2) + ')\n'
-        output += str(self.coarse_m ** 2) + ' coarse grid unknown(s)\n'
+        output += 'Fine grid size (' + str((self.levels[0].mx + 2)) + ' x ' + str((self.levels[0].my + 2)) + ')\n'
+        output += str(self.levels[0].mx * self.levels[0].my) + ' fine grid unknowns\n'
+        output += 'Coarse grid size (' + str(self.coarse_mx + 2) +  ' x ' + str(self.coarse_my + 2) + ')\n'
+        output += str(self.coarse_mx * self.coarse_my) + ' coarse grid unknown(s)\n'
         return output
 
 
-    def __init__(self, levels, coarse_m, smoother, coarse_solver=spsolve):
+    def __init__(self, levels, coarse_mx, coarse_my, smoother, coarse_solver=spsolve):
 
         self.levels = levels
         self.coarse_solver = coarse_solver
-        self.coarse_m = coarse_m
+        self.coarse_mx = coarse_mx
+        self.coarse_my = coarse_my
         self.level = self.levels[0]
         self.smoother = smoother
 
@@ -88,26 +89,27 @@ class multigrid_solver:
 
 class level:
 
-    def __init__(self, m, A, R, P, x1, x2, y1, y2):
+    def __init__(self, mx, my, A, R, P, x1, x2, y1, y2):
 
         if callable(A):
-            self.A = A(m)
+            self.A = A(mx, my, x1, x2, y1, y2)
         else:
             self.A = A
 
         if callable(R):
-            self.R = R(m)
+            self.R = R(mx, my)
         else:
             self.R = R
 
         if callable(P):
-            self.P = P(m)
+            self.P = P(mx, my)
         else:
             self.P = P
 
-        self.m = m
-        self.hx = (x2 - x1) / (m + 1)
-        self.hy = (y2 - y1) / (m + 1)
+        self.mx = mx
+        self.my = my
+        self.hx = (x2 - x1) / (mx + 1)
+        self.hy = (y2 - y1) / (my + 1)
 
 class linear_pfas_solver:
     '''
@@ -118,35 +120,38 @@ class linear_pfas_solver:
     def __repr__(self):
         output = 'PFAS solver\n'
         output += 'Number of levels = ' + str(len(self.levels)) + '\n'
-        output += 'Fine grid size (' + str((self.levels[0].m + 2)**2) + ', ' + str((self.levels[0].m + 2)**2) + ')\n'
-        output += str(self.levels[0].m**2) + ' fine grid unknowns\n'
-        output += 'Coarse grid size (' + str((self.coarse_m + 2)**2) + ', ' + str((self.coarse_m + 2)**2) + ')\n'
-        output += str(self.coarse_m ** 2) + ' coarse grid unknown(s)\n'
+        output += 'Fine grid size (' + str((self.levels[0].mx + 2)) + ' x ' + str((self.levels[0].my + 2)) + ')\n'
+        output += str(self.levels[0].mx * self.levels[0].my) + ' fine grid unknowns\n'
+        output += 'Coarse grid size (' + str((self.coarse_mx + 2)) + ' x ' + str((self.coarse_my + 2)) + ')\n'
+        output += str(self.coarse_mx * self.coarse_my) + ' coarse grid unknown(s)\n'
         return output
 
 
-    def __init__(self, levels, coarse_m, smoother, coarse_solver=pgs):
+    def __init__(self, levels, coarse_mx, coarse_my, smoother, coarse_solver=pgs):
 
         self.levels = levels
         self.coarse_solver = coarse_solver
-        self.coarse_m = coarse_m
+        self.coarse_mx = coarse_mx
+        self.coarse_my = coarse_my
         self.level = self.levels[0]
         self.smoother = smoother
 
     def lvl_solve(self, lvl, u, b, cycle):
 
         self.level = self.levels[lvl]
-        print(lvl * "    " + "Grid level " + str(lvl) + ", m = " + str(self.level.m))
+        print(lvl * "    " + "Grid level " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
         A = self.level.A
         u = self.smoother(A, u, b)
         R = self.level.R
         coarse_u = R.dot(u)
+        r = b - A.dot(u)
+        coarse_b = R.dot(r)
+        coarse_A = self.levels[lvl + 1].A
+        coarse_b = coarse_b + coarse_A.dot(coarse_u)
+
 
         if lvl < len(self.levels) - 2:
-            r = b - A.dot(u)
-            coarse_b = R.dot(r)
-            coarse_A = self.levels[lvl + 1].A
-            coarse_b = coarse_b + coarse_A.dot(coarse_u)
+
             if cycle == 'W':
                 self.lvl_solve(lvl + 1, coarse_u, coarse_b, cycle)
                 self.lvl_solve(lvl + 1, coarse_u, coarse_b, cycle)
@@ -168,25 +173,23 @@ class linear_pfas_solver:
                 self.lvl_solve(lvl + 1, coarse_u, coarse_b, 'V')
 
         else:
-            print((lvl + 1) * "    " + "Grid level " + str(lvl + 1) + ", m = " + str(self.coarse_m))
-            r = b - A.dot(u)
-            coarse_b = R.dot(r)
-            coarse_A = self.levels[lvl + 1].A
-            coarse_b = coarse_b + coarse_A.dot(coarse_u)
+            print((lvl + 1) * "    " + "Grid level " + str(lvl + 1) + ", mx = " + str(self.coarse_mx) + ", my = " + str(
+                self.coarse_my))
             uold = np.zeros_like(coarse_u)
             du = 1.0
             while du > 10 ** -5:
                 for i in range(0, len(uold)):
                     uold[i] = coarse_u[i]
                 coarse_u = self.smoother(coarse_A, coarse_u, coarse_b)
-                du = self.level.m * np.linalg.norm(uold - coarse_u)
+                du = self.level.mx * np.linalg.norm(uold - coarse_u)
 
         P = self.levels[lvl + 1].P
         coarse_u = coarse_u - R.dot(u)
         u += P.dot(coarse_u)
         self.level = self.levels[lvl]
         u = self.smoother(A, u, b)
-        print(lvl * "    " + "Grid level " + str(lvl) + ", m = " + str(self.level.m))
+        print(lvl * "    " + "Grid level " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(
+            self.level.my))
 
     def solve(self, b, u0=None, cycle='FV'):
 
@@ -241,7 +244,7 @@ def fmg(m, fh, eta0 = 1, eta1 = 3, eta2 = 3, numcycles = 5, cyclenum = 0):
     A = poisson2d(m)
     vh = vcycle(m, vh, A, fh, eta1 = eta1, eta2 = eta2, numcycles = numcycles - cyclenum + 1)
     return vh
-
+'''
 def pfas(m, uh, Ah, fh, eta=1, numcycles = 5, cyclenum = 0):
     if cyclenum < numcycles:
             vh = pgs(uh, Ah, fh, (m + 2) ** 2, maxiters=eta)
@@ -268,7 +271,7 @@ def pfas(m, uh, Ah, fh, eta=1, numcycles = 5, cyclenum = 0):
     vh = np.maximum(vh, 0.0)
     vh = pgs(vh, Ah, fh, (m + 2) ** 2, maxiters=eta)
     return vh
-
+'''
 def enforce_bdry_conds(U, F, bvals):
     for k in bvals:
         U[k] = F[k]

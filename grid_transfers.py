@@ -1,56 +1,76 @@
-import numpy as np
-from numpy import zeros
 from scipy import sparse
+import numpy as np
+def interpolate(mx, my):
+    N = (mx + 2) * (my + 2)
+    mx_fine = 2 * mx + 1
+    my_fine = 2 * my + 1
+    N_fine = (mx_fine + 2) * (my_fine + 2)
+    P = sparse.lil_matrix((N_fine, N))
+    k1, k2, k3, k4 = 0, 0, 0, 0
+    for i in range(0, N_fine):
+        if (i - (i // (mx_fine + 2))) % 2 == 0 and (i // (mx_fine + 2)) % 2 == 0:
+            P[i, k1] = 4.0
+            if i % (mx_fine + 2) == 0 and i > 0:
+                k2 = k1
+            k1 += 1
+        elif (i - (i // (mx_fine + 2))) % 2 == 1 and (i // (mx_fine + 2)) % 2 == 0:
+            P[i, (k2, k2 + 1)] = 2.0, 2.0
+            k2 += 1
+        elif (i - (i // (mx_fine + 2))) % 2 == 0 and (i // (mx_fine + 2)) % 2 == 1:
+            P[i, (k3, k3 + mx + 2)] = 2.0, 2.0
+            if i % (mx_fine + 2) == 0 and i > 0:
+                k4 = k3
+            k3 += 1
+        elif (i - (i // (mx_fine + 2))) % 2 == 1 and (i // (mx_fine + 2)) % 2 == 1:
+            P[i, (k4, k4 + 1, k4 + mx + 2, k4 + mx + 3)] = 1.0, 1.0, 1.0, 1.0
+            k4 += 1
+    P = P.tocsr()
+    return P / 4.0
 
-def interpolate(m):
-    N = (m + 2)**2
-    I = sparse.lil_matrix(((2*m + 3)**2, N))
-    A = zeros((2*m + 3, m + 2))
-    B = zeros((2*m + 3, 2*m + 4))
-    for i in range(1, 2*m + 2):
-        n = int(i/2)
-        if i % 2 == 0:
-            A[i, n] = 4.0
-            B[i, (n, n + m + 2)] = 2.0, 2.0
-        else:
-            A[i, (n, n + 1)] = 2.0, 2.0
-            B[i,(n, n + 1, n + m + 2, n + m + 3)] = 1.0, 1.0, 1.0, 1.0
-    for i in range(1, 2*m + 2):
-        if i % 2 == 0:
-            n = int(i/2)
-            I[i*(2*m + 3):(2*m + 3)*(i + 1), n*(m + 2):(n + 1)*(m + 2)] = A
-        else:
-            n = int(i/2)
-            I[i*(2*m + 3):(2*m + 3)*(i + 1), n*(m + 2):n*(m + 2) + 2*m + 4] = B
-    I = I.tocsr()
-    return I / 4.0
+def restrict_fw(mx, my):
 
-def restrict_fw(m):
-    '''
-    n = int((m - 1) / 2)
-    I = np.transpose(interpolate(n)) / 4.0
-    return I
-    '''
-    n = int((m - 1) / 2)
-    N = (m + 2) ** 2
-    A = zeros((n + 2, 3 * (m + 2)))
-    I = sparse.lil_matrix(((n + 2) ** 2, N))
-    for i in range(0, n):
-        A[i + 1, (2 * i + 1, 2 * i + 2, 2 * i + 3, 2 * i + m + 3,
-                  2 * i + m + 4, 2 * i + m + 5, 2 * i + 2 * (m + 2) + 1, 2 * i +
-                  2 * (m + 2) + 2, 2 * i + 2 * (m + 2) + 3)] = 1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0
-    for i in range(0, n):
-        I[(i + 1) * (n + 2):(i + 2) * (n + 2), (2 * i + 1) * (m + 2):(2 * (i + 1) + 2) * (m + 2)] = A
-    I = I.tocsr()
-    return I / 16.0
+    mx_coarse = (mx - 1) // 2
+    my_coarse = (my - 1) // 2
+    N = (mx + 2) * (my + 2)
+    N_coarse = (mx_coarse + 2) * (my_coarse + 2)
+    R = sparse.lil_matrix((N_coarse, N))
+    k = 0
+
+    for i in range(0, N_coarse):
+        if i % (mx_coarse + 2) == 0 and i > 0:
+            k += 1
+        n = 2 * i + k * (mx + 1)
+        if i < mx_coarse + 2:
+            R[i, n] = 1.0
+        if i > (mx_coarse + 1) * (my_coarse + 2):
+            R[i, n] = 1.0
+        if i % (mx_coarse + 2) == 0:
+            R[i, n] = 1.0
+        if i % (mx_coarse + 2) == mx_coarse + 1:
+            R[i, n] = 1.0
+        elif i > mx_coarse + 2 and i < (mx_coarse + 1) * (my_coarse + 2):
+            R[i, (n - 1, n, n + 1)] = .125, .25, .125
+            R[i, (n - mx - 2, n + mx + 2)] = .125, .125
+            R[i, (n - mx - 3, n + mx + 1)] = .0625, .0625
+            R[i, (n - mx - 1, n + mx + 3)] = .0625, .0625
+
+    R = R.tocsr()
+    return R
 
 
-def restrict_inj(m):
-    n = int((m - 1) / 2)
-    N = (m + 2) ** 2
-    I = sparse.lil_matrix(((n + 2) ** 2, N))
-    for j in range(n + 2):
-        for i in range(n + 2):
-            I[i + j * (n + 2), 2 * i + 2 * j * (m + 2)] = 1.0
-    I = I.tocsr()
-    return I
+def restrict_inj(mx, my):
+    mx_coarse = (mx - 1) // 2
+    my_coarse = (my - 1) // 2
+    N = (mx + 2) * (my + 2)
+    N_coarse = (mx_coarse + 2) * (my_coarse + 2)
+    R = sparse.lil_matrix((N_coarse, N))
+    k = 0
+    for i in range(N_coarse):
+        if i % (mx_coarse + 2) == 0 and i > 0:
+            k += 1
+        n = 2 * i + k * (mx + 1)
+        if (i - i * (mx_coarse + 2)) % 2 == 0:
+            R[i, n] = 1.0
+    R = R.tocsr()
+    return R
+
