@@ -1,6 +1,7 @@
 
 from scipy import sparse
 from numpy import zeros, identity, linspace
+import matplotlib.pyplot as plt
 
 f = lambda x, y: 0
 g = f

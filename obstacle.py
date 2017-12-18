@@ -5,6 +5,7 @@ from ReducedSpace import reducedspace
 from Poisson2D import poisson2d, rhs
 from cvxopt import solvers, matrix
 from blockprint import *
+import matplotlib.pyplot as plt
 
 
 class box_obstacle_problem:

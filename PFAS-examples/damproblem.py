@@ -24,7 +24,7 @@ def g(x, y):
 coarse_mx = 1
 coarse_my = 2
 num_cycles = 7
-cycle = 'FV'
+cycle = 'V'
 
 
 bounds = (x1, x2, y1, y2)
@@ -71,7 +71,7 @@ U5exact = np.array([8, 0, 0, 0, 0, 0, 0])
 exact = [U1exact, U2exact, U3exact, U4exact, U5exact]
 num = [U1, U2, U3, U4, U5]
 for i in range(5):
-    print('Error on region ' + str(i + 1) + ':', np.linalg.norm(exact[i] - num[i], np.inf), '\n')
-    print('Numerical solution on region' + str(i + 1) + ':', num[i])
-    print('Exact solution on region' + str(i + 1) + ':', exact[i], '\n')
+    print('Error on region ' + str(i + 1) + ':', np.linalg.norm(exact[i] - num[i], np.inf))
+    print('Numerical solution on region ' + str(i + 1) + ':', num[i])
+    print('Exact solution on region ' + str(i + 1) + ':', exact[i], '\n')
 
