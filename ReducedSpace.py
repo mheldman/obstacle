@@ -1,6 +1,126 @@
 import numpy as np
 from scipy.sparse.linalg import cg
 
+'''
+Reduced space algorithm for nonlinear complementarity problems (NCPs) of the following form:
+
+        F(x) >= 0;
+           x >= 0;
+    x^T[F(x)] = 0,
+       
+where F: R^n to R^n.
+
+For linear complementarity problems, f(x) = Ax + b is affine, and the problem reduces to:
+
+     Ax - b >= 0;
+          x >= 0;
+ x^T(Ax - b) = 0.
+
+Note that A is square.
+
+The algorithm uses a modified Newton's method. On each iteration, an active set of indices is computed, defined by
+
+    Active(x) = {i in {1,...,n} : x_i = 0 and F_i(x) > 0}
+
+and an inactive set
+    
+    I(x) = {1,...,n} \ Active(x) = {i in {1,...,n} : x_i > 0 or F_i(x) <= 0}.
+
+The active set encodes the indices where the nonnegativity constraints on the variables are active, so that 
+the function value can be ignored. Once these sets are computed, the reduced Newton's method is applied; the gradient
+grad(F)(xk) at the current iterate xk is computed, and a next search direction is found by taking a Newton step in the 
+space of inactive constraints by approximately solving:
+
+        [grad(F)(xk)]_{I(xk), I(xk)}d = -F_{I(xk)}(xk)
+
+and stepping in the reduced space, i.e.
+
+        xk_{I(xk), I(xk)} = xk_{I(xk), I(xk)} + d.
+        
+A line search the produces the next iterate.
+
+Reference:
+
+S.J. Benson, T.S. Munson, Flexible complementarity solvers for large-scale applications, 
+Optim. Methods Softw. 21 (1) (2006) 155–168.
+
+ '''
+
+
+class rspmethod_solver:
+
+    '''
+    parameters:
+
+    F {tuple,
+
+    '''
+
+    def __init__(self, F, gradF, tol, sigma, beta, gamma, maxiters, k, iterate, n):
+
+        self.F = F
+        self.gradF = gradF
+        self.tol = tol
+        self.sigma = sigma
+        self.beta = beta
+        self.gamma = gamma
+        self.iterate = iterate
+        self.dim = n
+
+
+
+
+
+class rsp_iterate:
+
+    '''
+    Stores active set and inactive set, gradient and function value for each iterate.
+
+    parameters:
+
+    xk {vector} : current iterate
+    F {callable, tuple} : Function F. If F is affine, a tuple of the form (A, b) is accepted, and function values
+    are computed as F(x) = Ax + b.
+    gradF {callable, Nonetype} : Gradient gradF for F. If F is affine, gradF = A.
+
+    attributes:
+
+    Fk {vector} : F(xk), where xk is the current iterate
+    gradFk {maxtrix} : Jacobian matrix gradF(xk) at the current iterate
+    Ak {array} : active set for the current iterate
+    Ik {array} : inactive set for the current iterate
+
+    '''
+
+    def __init__(self, xk, F, gradF = None):
+
+        if callable(F):
+            self.Fk = F(xk)
+            self.gradFk = gradF(xk)
+        else:
+            self.Fk = F[0].dot(xk) + F[1]
+            self.gradFk = F[0]
+
+        self.Ik = []
+        self.Ak = []
+
+        for i in range(0, len(xk)):
+            if xk[i] = 0 and self.F[i] > 0:
+                self.Ak.append(i)
+            else:
+                self.Ik.append(i)
+
+
+
+
+
+
+
+
+
+
+
+
 def Fomega(A, x):
     n = len(x)
     y = np.zeros(n)
@@ -13,7 +133,6 @@ def pi(x):
     y = x
     y[[x < 0]] = 0
     return y
-
 
 def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta = .5, gamma = 10 ** -12):
     n = len(x0)
