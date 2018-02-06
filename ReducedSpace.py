@@ -1,193 +1,218 @@
 import numpy as np
-from scipy.sparse.linalg import cg
+from scipy.sparse.linalg import spsolve
+from scipy.sparse import lil_matrix, coo_matrix
 
 '''
-Reduced space algorithm for nonlinear complementarity problems (NCPs) of the following form:
+Reduced space algorithm for linear complementarity problems (LCPs).
 
+The reduced space method is designed to solve the nonlinear complementarity problem (NCP):
+    
+    Given F:R^n to R^n, find x in R^n satisfying
+    
         F(x) >= 0;
            x >= 0;
-    x^T[F(x)] = 0,
-       
-where F: R^n to R^n.
+    x^T[F(x)] = 0.
 
-For linear complementarity problems, f(x) = Ax + b is affine, and the problem reduces to:
+For LCPs, f(x) = b - Ax is affine, and the problem reduces to:
+    
+    Given A in R^(n x n), b in R^n, find x in R^n satisfying
 
-     Ax - b >= 0;
-          x >= 0;
- x^T(Ax - b) = 0.
+        b - Ax >= 0;
+             x >= 0;
+    x^T(b - Ax) = 0.
 
 Note that A is square.
 
 The algorithm uses a modified Newton's method. On each iteration, an active set of indices is computed, defined by
 
-    Active(x) = {i in {1,...,n} : x_i = 0 and F_i(x) > 0}
+    Active(x) = {i in {1,...,n} : x_i = 0 and [A(x)]_i > 0}
 
 and an inactive set
     
-    I(x) = {1,...,n} \ Active(x) = {i in {1,...,n} : x_i > 0 or F_i(x) <= 0}.
+    I(x) = {1,...,n} \ Active(x) = {i in {1,...,n} : x_i > 0 or [A(x)]_i <= 0}.
 
 The active set encodes the indices where the nonnegativity constraints on the variables are active, so that 
 the function value can be ignored. Once these sets are computed, the reduced Newton's method is applied; the gradient
-grad(F)(xk) at the current iterate xk is computed, and a next search direction is found by taking a Newton step in the 
-space of inactive constraints by approximately solving:
+grad(Ax - b) = A at the current iterate xk is computed, and a next search direction is found by taking a Newton step in 
+the space of inactive constraints by approximately solving:
 
-        [grad(F)(xk)]_{I(xk), I(xk)}d = -F_{I(xk)}(xk)
+        [Axk]_{I(xk), I(xk)}d = -(Axk - b)_{I(xk)}(xk)
 
 and stepping in the reduced space, i.e.
 
-        xk_{I(xk), I(xk)} = xk_{I(xk), I(xk)} + d.
-        
-A line search the produces the next iterate.
+        xk_{I(xk), I(xk)} = xk_{I(xk), I(xk)} + alpha*d.        
 
 Reference:
 
 S.J. Benson, T.S. Munson, Flexible complementarity solvers for large-scale applications, 
 Optim. Methods Softw. 21 (1) (2006) 155–168.
-
  '''
 
 
-class rspmethod_solver:
+def pi(x):
+    y = np.zeros_like(x)
+    y[x > 0] = x[x > 0]
+    return y
+
+class rspmethod_lcp_solver:
 
     '''
     parameters:
 
-    F {tuple,
+    F {tuple, callable}
 
     '''
 
-    def __init__(self, F, gradF, tol, sigma, beta, gamma, maxiters, k, iterate, n):
+    def __init__(self, A, b, tol, maxiters, fixed_vals):
 
-        self.F = F
-        self.gradF = gradF
+        self.A = A
+        self.b = b
         self.tol = tol
-        self.sigma = sigma
-        self.beta = beta
-        self.gamma = gamma
-        self.iterate = iterate
-        self.dim = n
+        self.maxiters = maxiters
+        self.num_iterations = 0
+        self.xk = np.zeros_like(b)
+        self.iterate = rsp_lcp_iterate(self.xk, A, b)
+        self.fixed_vals = fixed_vals
+
+    def compute_Fomega(self, x = None):
+
+        if x is None:
+
+            x = self.xk
+            Fomega = np.minimum(F, 0.0)
+            Fomega[x > 0] = F[x > 0]
+            Fomega[self.fixed_vals] = 0.0
+            self.iterate.Fomega = Fomega
+            return Fomega
+
+        else:
+
+            F = self.b - self.A.dot(x)
+            Fomega = np.minimum(F, 0.0)
+            Fomega[x > 0] = F[x > 0]
+            Fomega[self.fixed_vals] = 0.0
+            return Fomega
 
 
+    def solve(self, init_iterate = None, line_search_params = None, linear_solver = 'splu'):
+
+        A = self.A
+        b = self.b
+
+        if line_search_params is None:
+            beta = .5
+            sigma = 10e-4
+            gamma = 10e-12
+        else:
+            beta, sigma, gamma = line_search_params
+
+        if init_iterate is not None:
+            self.iterate = rsp_lcp_iterate(init_iterate, A, b, fixed_vals = self.fixed_vals)
+            self.xk = self.iterate.xk
+            xk = self.xk
+        else:
+            self.iterate = rsp_lcp_iterate(pi(spsolve(A, b)), A, b)
+            self.xk = self.iterate.xk
+            xk = self.xk
+
+        if self.num_iterations % 1 == 0:
+            print('Iteration:', str(self.num_iterations))
+            print('||Fomega||_inf =', np.linalg.norm(self.iterate.Fomega, np.inf), '\n')
+
+        while np.linalg.norm(self.iterate.Fomega, np.inf) > self.tol and self.num_iterations < self.maxiters:
+
+            F_active, gradF_active = self.iterate.compute_Factive(A)
+            if linear_solver == 'splu':
+                d = spsolve(gradF_active, -F_active)
+
+            self.iterate.search_dir = np.zeros_like(xk)
+            self.iterate.search_dir[self.iterate.Ik] = d
+            d = self.iterate.search_dir
+            alpha, fail = 1, 0
+            while np.linalg.norm(self.compute_Fomega(pi(xk + alpha*d)))\
+                                                > (1 - sigma * alpha) * np.linalg.norm(self.iterate.Fomega):
+                alpha *= beta
+                if alpha < gamma:
+                    fail += 1
+                    self.iterate.search_dir = -self.iterate.F
+                    d = self.iterate.search_dir
+                    alpha = 1
+
+                if fail == 2:
+                    break
+
+            self.xk = pi(xk + alpha*d)
+            xk = self.xk
+            self.iterate = rsp_lcp_iterate(self.xk, A, b, fixed_vals=self.fixed_vals)
+            self.num_iterations += 1
+            if self.num_iterations % 1 == 0:
+                print('Iteration:', str(self.num_iterations))
+                print('||Fomega||_inf =', np.linalg.norm(self.iterate.Fomega, np.inf), '\n')
+
+        return xk
 
 
+class rsp_lcp_iterate:
 
-class rsp_iterate:
 
     '''
     Stores active set and inactive set, gradient and function value for each iterate.
 
     parameters:
 
-    xk {vector} : current iterate
-    F {callable, tuple} : Function F. If F is affine, a tuple of the form (A, b) is accepted, and function values
-    are computed as F(x) = Ax + b.
-    gradF {callable, Nonetype} : Gradient gradF for F. If F is affine, gradF = A.
+        xk {vector} : current iterate; an (n x 0) or (n x 1) Numpy array.
+
+        F {callable, tuple} : Objective function F. If F is affine, a tuple of the form (A, b) is accepted, and function
+        values are computed as F(x) = Ax + b. Otherwise, F is a function that takes in an (n x 1) or (n x 0) Numpy array
+        and returns an (n x 0) or (n x 1) Numpy array.
+
+        gradF {callable, Nonetype} : Gradient gradF for F. If F is affine, gradF = A. Otherwise, gradF is a function which
+        takes in an (n x 1) or (n x 0) Numpy array and returns an (n x n) Numpy array.
 
     attributes:
 
-    Fk {vector} : F(xk), where xk is the current iterate
-    gradFk {maxtrix} : Jacobian matrix gradF(xk) at the current iterate
-    Ak {array} : active set for the current iterate
-    Ik {array} : inactive set for the current iterate
+        Fk {vector} : F(xk), or the objective function value at xk. An (n x 1) or (n x 0) Numpy array.
 
+        gradFk {maxtrix} : Jacobian matrix gradF(xk) for the function F at the current iterate. An (n x n) Numpy array.
+
+        Ak {array} : Active set of indices for the current iterate.
+
+        Ik {array} : Inactive set of indices for the current iterate.
     '''
 
-    def __init__(self, xk, F, gradF = None):
+    def __init__(self, xk, A, b, fixed_vals = []):
 
-        if callable(F):
-            self.Fk = F(xk)
-            self.gradFk = gradF(xk)
-        else:
-            self.Fk = F[0].dot(xk) + F[1]
-            self.gradFk = F[0]
-
-        self.Ik = []
-        self.Ak = []
-
-        for i in range(0, len(xk)):
-            if xk[i] = 0 and self.F[i] > 0:
+        self.Ik, self.Ak = [], []
+        self.F = b - A.dot(xk)
+        for i in range(len(xk)):
+            if (xk[i] == 0 and self.F[i] > 0) or i in fixed_vals:
                 self.Ak.append(i)
             else:
                 self.Ik.append(i)
 
+        self.search_dir = np.zeros_like(xk)
+        self.xk = xk
+        self.F_active, self.gradF_active = self.compute_Factive(A)
+        self.Fomega = self.compute_Fomega(fixed_vals = fixed_vals)
+
+    def compute_Fomega(self, fixed_vals = []):
+
+        xk, F = self.xk, self.F
+        Fomega = np.minimum(F, 0.0)
+        Fomega[xk > 0.0] = F[xk > 0.0]
+        Fomega[fixed_vals] = 0.0
+        return Fomega
+
+    def compute_Factive(self, A):
+
+        F = self.F
+        gradF_active = -A[self.Ik, :][:, self.Ik]
+        F_active = F[self.Ik]
+
+        return F_active, gradF_active.tocsr()
 
 
 
 
 
-
-
-
-
-
-
-def Fomega(A, x):
-    n = len(x)
-    y = np.zeros(n)
-    y[[x > 0]] = A[[x > 0]]
-    y[[x <= 0]] = np.minimum(A[[x <= 0]], 0.0)
-    return y
-
-
-def pi(x):
-    y = x
-    y[[x < 0]] = 0
-    return y
-
-def reducedspace(F, gradF, x0, tol = 10**-5, exact = True, sigma=10 ** -4, beta = .5, gamma = 10 ** -12):
-    n = len(x0)
-    k = 0
-    xk = x0
-    A = F(xk)
-    FO = Fomega(A, xk)
-    pik = pi(x0)
-    while np.linalg.norm(FO, np.inf) > tol and k < 100:  # might use ||[x1*F1, x2*F2, ..., xn*Fn]||_inf
-        k += 1
-        Axk = []
-        Ixk = []
-        for i in range(0, n):
-            if xk[i] == 0 and A[i] > 0:
-                Axk.append(i)
-            else:
-                Ixk.append(i)
-        d = np.zeros(n)
-        temp = gradF(xk)
-        m = len(Ixk)
-        B = np.zeros((m, m))
-        for i in range(0, m):
-            for j in range(0, m):
-                B[i, j] = temp[Ixk[i], Ixk[j]]
-        dIxk, info = cg(B, -A[Ixk], tol=10 ** -5)
-        j = 0
-        for i in Ixk:
-            d[i] = dIxk[j]
-            j += 1
-
-        alpha = beta
-        fail = False
-        Ak = F(pik)
-        while np.linalg.norm(Fomega(Ak, pik)) > (1 - sigma * alpha) * np.linalg.norm(FO):
-            pik = pi(xk + alpha * d)
-            Ak = F(pik)
-            alpha *= beta
-            if alpha < gamma:
-                fail = True
-                break
-
-        if fail:
-            alpha = beta
-            d = -F(xk)
-            while np.linalg.norm(Fomega(Ak, pik)) > (1 - sigma * alpha) * np.linalg.norm(FO):
-                alpha = alpha * beta
-                pik = pi(xk + alpha * d)
-                Ak = F(pik)
-            if beta < gamma:
-                print('Could not provide sufficient decrease. Process terminated iteration', k)
-                return xk
-
-        xk = pik
-        A = F(xk)
-        FO = Fomega(A, xk)
-    print('\n', 'F(xk)*xk =', np.transpose(F(xk)).dot(xk))
-    return xk
 
