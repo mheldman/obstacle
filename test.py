@@ -235,4 +235,14 @@ def rsp_test(bounds, f, g, psi, mx, my, linear_solver, tol = 10**-8, maxiters = 
         print('Error: ||U - Uexact||_inf =', np.linalg.norm(U - Uexact, np.inf), '\n')
     print('\nTime for rsp:', timex, '\n')
     print('Number of iterations =', rsp_solver.num_iterations, '\n')
+    print('Size of reduced space by iteration: ',
+                    [rsp_solver.iterates[i].red_space_size for i in range(rsp_solver.num_iterations)])
+    print('Time for linear solver by iteration: ',
+                    [rsp_solver.iterates[i].linear_solver_time for i in range(rsp_solver.num_iterations)])
+    print('Time for linear solves / total time: ',
+          sum([rsp_solver.iterates[i].linear_solver_time for i in range(rsp_solver.num_iterations)])/timex)
+    print('Time for line search by iteration: ',
+          [rsp_solver.iterates[i].line_search_time for i in range(rsp_solver.num_iterations)])
+    print('Time for line search / total time: ',
+          sum([rsp_solver.iterates[i].line_search_time for i in range(rsp_solver.num_iterations)]) / timex)
     return U

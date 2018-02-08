@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.sparse.linalg import spsolve
-from scipy.sparse import lil_matrix, coo_matrix
+import pyamg
+from time import time
+from GS import pgs
 
 '''
 Reduced space algorithm for linear complementarity problems (LCPs).
@@ -73,6 +75,8 @@ class rspmethod_lcp_solver:
         self.xk = np.zeros_like(b)
         self.iterate = rsp_lcp_iterate(self.xk, A, b)
         self.fixed_vals = fixed_vals
+        self.iterates = []
+        self.iterates.append(self.iterate)
 
     def compute_Fomega(self, x = None):
 
@@ -111,7 +115,7 @@ class rspmethod_lcp_solver:
             self.xk = self.iterate.xk
             xk = self.xk
         else:
-            self.iterate = rsp_lcp_iterate(pi(spsolve(A, b)), A, b)
+            self.iterate = rsp_lcp_iterate(pi(spsolve(A, b)), A, b, fixed_vals = self.fixed_vals)
             self.xk = self.iterate.xk
             xk = self.xk
 
@@ -121,14 +125,25 @@ class rspmethod_lcp_solver:
 
         while np.linalg.norm(self.iterate.Fomega, np.inf) > self.tol and self.num_iterations < self.maxiters:
 
+            self.iterate.xk = pgs(A, xk, b)
+            xk = self.iterate.xk
+
             F_active, gradF_active = self.iterate.compute_Factive(A)
+            tstart = time()
+
             if linear_solver == 'splu':
                 d = spsolve(gradF_active, -F_active)
+            elif linear_solver == 'amg':
+                d = pyamg.solve(gradF_active, -F_active, verb=True, tol=1e-12)
+
+            self.iterate.linear_solver_time = time() - tstart
 
             self.iterate.search_dir = np.zeros_like(xk)
             self.iterate.search_dir[self.iterate.Ik] = d
             d = self.iterate.search_dir
             alpha, fail = 1, 0
+            tstart = time()
+
             while np.linalg.norm(self.compute_Fomega(pi(xk + alpha*d)))\
                                                 > (1 - sigma * alpha) * np.linalg.norm(self.iterate.Fomega):
                 alpha *= beta
@@ -141,8 +156,12 @@ class rspmethod_lcp_solver:
                 if fail == 2:
                     break
 
+            self.iterate.line_search_time = time() - tstart
+            self.iterate.alpha = alpha
+            self.iterate.line_search_fail = fail
             self.xk = pi(xk + alpha*d)
             xk = self.xk
+            self.iterates.append(self.iterate)
             self.iterate = rsp_lcp_iterate(self.xk, A, b, fixed_vals=self.fixed_vals)
             self.num_iterations += 1
             if self.num_iterations % 1 == 0:
@@ -194,6 +213,13 @@ class rsp_lcp_iterate:
         self.xk = xk
         self.F_active, self.gradF_active = self.compute_Factive(A)
         self.Fomega = self.compute_Fomega(fixed_vals = fixed_vals)
+        self.linear_solver_time = 0.0
+        self.line_search_time = 0.0
+        self.red_space_size = len(self.Ik)
+        self.error = np.linalg.norm(self.Fomega, np.inf)
+        self.alpha = 1
+        self.line_search_fail = 0
+
 
     def compute_Fomega(self, fixed_vals = []):
 
@@ -205,10 +231,8 @@ class rsp_lcp_iterate:
 
     def compute_Factive(self, A):
 
-        F = self.F
         gradF_active = -A[self.Ik, :][:, self.Ik]
-        F_active = F[self.Ik]
-
+        F_active = self.F[self.Ik]
         return F_active, gradF_active.tocsr()
 
 
