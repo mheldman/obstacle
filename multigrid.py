@@ -184,7 +184,7 @@ class linear_pfas_solver:
     Sources:
 
     [1] Achi Brandt and Colin W. Cryer. Multigrid algorithms for the solution of linear complementarity problems
-        arising from free boundary problems. Siam Journal on Scientic and Statistical Computing, 4(4):655–684, 1983.
+        arising from free boundary problems. Siam Journal on Scientific and Statistical Computing, 4(4):655–684, 1983.
 
     '''
 
