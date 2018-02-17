@@ -1,7 +1,6 @@
 import numpy as np
 from numpy import linspace, zeros
 from GS import gs
-from ReducedSpace import reducedspace
 from Poisson2D import poisson2d, rhs
 from cvxopt import solvers, matrix
 from blockprint import *
@@ -22,6 +21,7 @@ class box_obstacle_problem:
         self.F = F
         self.mx = mx
         self.my = my
+        self.bndry_pts = []
 
     def __repr__(self):
         x1, x2, y1, y2 = self.bounds
@@ -44,10 +44,9 @@ class box_obstacle_problem:
             for i in range(mx + 2):
                 k = kk(i, j)
                 P[k] = self.psi(X[i], Y[j])
-                U[k] = max(P[k], 0.0)
+                U[k] = max(-P[k], 0.0)
         self.F = self.F - self.A.dot(P)
-        self.U = U - P
-        self.P = P
+        self.U, self.P = U, P
 
     def discretize(self, mx, my):
 
@@ -55,14 +54,20 @@ class box_obstacle_problem:
         (x1, x2, y1, y2) = self.bounds
         self.F = rhs(self.f, mx, my, g=self.g, x1=x1, x2=x2, y1=y1, y2=y2)
         self.A = poisson2d(mx, my, x1=x1, x2=x2, y1=y1, y2=y2)
+        kk = lambda i, j: j * (mx + 2) + i
+        for j in range(0, my + 2):
+            for i in range(0, mx + 2):
+                k = kk(i, j)
+                if j == 0 or j == my + 1 or i == 0 or i == mx + 1:
+                    self.bndry_pts.append(k)
         self.initialize()
 
-    def solve(self, obstacle_solver, *args):
+    def solve(self, obstacle_solver, *args, **kwargs):
         print(self)
-        return self.P + obstacle_solver(*args)
+        return self.P + obstacle_solver(*args, **kwargs)
 
 
-
+'''
 def obstacleqp(psi, m, f, g, a = -1.0, b = 1.0):
   A, U, P, F, X = poisson2d(m, f=f, a = a, b = b, psi = psi, g = g)
   blockPrint()
@@ -84,3 +89,4 @@ def obstaclecpgs(psi, m, f, g, a = -1.0, b = 1.0):
     N = m**2
     U = gs(U, A, F, N, maxiters = 1000, tol = 10**-8, P = P)
     return U
+'''
