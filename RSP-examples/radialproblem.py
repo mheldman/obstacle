@@ -16,4 +16,4 @@ def uexact(x, y):
 
 x1, x2, y1, y2 = -2.0, 2.0, -2.0, 2.0
 bounds = (x1, x2, y1, y2)
-rsp_test(bounds, f, g, psi, 400, 400, 'splu', uexact = uexact)
+rsp_test(bounds, f, g, psi, 100, 100, 'splu', uexact = uexact)
