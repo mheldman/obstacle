@@ -1,0 +1,7 @@
+include DEVELOPERS.txt
+include INSTALL.txt
+include LICENSE.txt
+include MANIFEST.in
+include README.md
+include requirements.txt
+include obstacle/pfas_core/*.h

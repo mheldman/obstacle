@@ -1,0 +1,9 @@
+instantiate:
+- types:
+    - [int, float, float]
+    - [int, double, double]
+    - [int, "std::complex<float>", float]
+    - [int, "std::complex<double>", double]
+  functions:
+    - gauss_seidel
+    - projected_gauss_seidel

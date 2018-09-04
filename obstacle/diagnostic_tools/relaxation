@@ -1,0 +1,75 @@
+#include "Python.h"
+
+int _gauss_seidel(int Aj[], int Aj_size,
+                  double Ax[], int Ax_size,
+                  double  x[], int  x_size,
+                  double  b[], int  b_size,
+                  int row_start,
+                  int row_stop,
+                  int row_step)
+{
+    for(I i = row_start; i != row_stop; i += row_step) {
+        int start = Ap[i];
+        int end   = Ap[i+1];
+        double rsum = 0;
+        double diag = 0;
+
+        for(int jj = start; jj < end; jj++){
+            int j = Aj[jj];
+            if (i == j)
+                diag  = Ax[jj];
+            else
+                rsum += Ax[jj]*x[j];
+        }
+
+        if (diag != double 0.0){
+            x[i] = (b[i] - rsum)/diag;
+        }
+    }
+}
+}
+
+static PyObject *gauss_seidel(PyObject *self, PyObject *args)
+{
+    PyObject *Aj;
+    double Aj;
+    int Aj_size;
+    PyObject *Ax;
+    int Ax_size;
+    PyObject *x;
+    int x_size;
+    PyObject *b;
+    int b_size;
+    int row_start;
+    int row_stop;
+    int row_step;
+
+    if (!PyArg_ParseTuple(args, "0i0i0i0iii", &Aj, &Aj_size, &Ax, &Ax_size, &x, &x_size, &b_size))
+        return NULL;
+
+    Aj_iter = PyObject_GetIter(PyObject *Aj);
+    pr_length = PyObject_Length(float_list);
+    if (pr_length < 0)
+        return NULL;
+    pr = (double *) malloc(sizeof(double *) * pr_length);
+    if (pr == NULL)
+        return NULL;
+    for (int index = 0; index < pr_length; index++) {
+        PyObject *item;
+        item = PyList_GetItem(float_list, index);
+        if (!PyFloat_Check(item))
+            pr[index] = 0.0;
+        pr[index] = PyFloat_AsDouble(item);
+    }
+    return Py_BuildValue("i", _asdf(pr, pr_length));
+}
+
+
+const I Ap[], const int Ap_size,
+                  const I Aj[], const int Aj_size,
+                  const T Ax[], const int Ax_size,
+                        T  x[], const int  x_size,
+                  const T  b[], const int  b_size,
+                  const I row_start,
+                  const I row_stop,
+                  const I row_step

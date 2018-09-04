@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="bf8b2624-b394-409e-9463-bfa41e75d413" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PFAS-examples/elastic-plasictorsion.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diagnostic_tools/projected_newton_diagnostic.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diagnostic_tools/relaxation" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/octave-workspace" afterPath="$PROJECT_DIR$/octave-workspace" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Jacobi_smoother_example.py" afterPath="$PROJECT_DIR$/Jacobi_smoother_example.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Obstacle Problem 2D.ipynb" afterPath="$PROJECT_DIR$/Obstacle Problem 2D.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PFAS-examples/radialproblem.py" afterPath="$PROJECT_DIR$/PFAS-examples/radialproblem.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReducedSpace.py" afterPath="$PROJECT_DIR$/ReducedSpace.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multigrid.py" afterPath="$PROJECT_DIR$/multigrid.py" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="diagnostics.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/diagnostics.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6960">
+              <caret line="464" column="17" lean-forward="true" selection-start-line="464" selection-start-column="17" selection-end-line="464" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="grid_transfers_diagnostic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/grid_transfers_diagnostic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="22" column="36" lean-forward="false" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GS_diagnostic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/GS_diagnostic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="32" column="31" lean-forward="false" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="multigrid_diagnostic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/multigrid_diagnostic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="339">
+              <caret line="475" column="44" lean-forward="false" selection-start-line="475" selection-start-column="44" selection-end-line="475" selection-end-column="44" />
+              <folding>
+                <element signature="e#25#43#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="obstacle_diagnostic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/obstacle_diagnostic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Poisson2D_diagnostic.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/Poisson2D_diagnostic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="24" column="31" lean-forward="false" selection-start-line="24" selection-start-column="31" selection-end-line="24" selection-end-column="31" />
+              <folding>
+                <element signature="e#1#25#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="relaxation" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/relaxation">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="441">
+              <caret line="49" column="11" lean-forward="false" selection-start-line="49" selection-start-column="11" selection-end-line="49" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="scratch_12.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/diagnostic_tools/scratch_12.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#384#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>rsp</find>
+      <find>exit(</find>
+      <find>solve_flow</find>
+      <find>class alpha</find>
+      <find>M =</find>
+      <find>M</find>
+      <find>stokes_new</find>
+      <find>plot(al</find>
+      <find>pfas_test</find>
+      <find>self.u</find>
+      <find>uold</find>
+      <find>maxiters</find>
+      <find>tol</find>
+      <find>smoothing_iters</find>
+      <find>bndry_pts</find>
+      <find>compute_</find>
+      <find>\n</find>
+      <find>final</find>
+      <find>maxit</find>
+      <find>to</find>
+      <find>amg</find>
+      <find>maxiter</find>
+      <find>residual iteration</find>
+      <find>np.zeros</find>
+      <find>gaus</find>
+      <find>def gauss_seidel</find>
+      <find>gauss_seidel</find>
+      <find>projected_</find>
+      <find>active_set</find>
+      <find>DOLFI</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>PN</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Poisson2D.py" />
+        <option value="$PROJECT_DIR$/obstacle.py" />
+        <option value="$PROJECT_DIR$/RSP-examples/unconstrained.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/RSP-examples/radialproblem.py" />
+        <option value="$PROJECT_DIR$/RSP-examples/damproblem.py" />
+        <option value="$PROJECT_DIR$/Jacobi_smoother_example.py" />
+        <option value="$PROJECT_DIR$/Obstacle Problem 2D.ipynb" />
+        <option value="$PROJECT_DIR$/diagnostics.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/test.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/multigrid.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/PFAS-examples/radialproblem_diagnostic.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_14.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/E8CBD937-5C91-4EE2-8EB1-968019E772AA/test_script.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/2A998A73-75C5-4D72-B7EE-804A88545CBF/test_script.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/5434F906-1E26-40BB-B0FB-2A7F615EF633/test_script.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6EADDE60-B438-436C-8011-B34BDFB36E00/test_script.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/1D399887-1A4B-4FD6-968F-B709FAC841C1/test_script.py" />
+        <option value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6BBBA5B4-15FB-4D31-B2A0-222C05DED36F/test_script.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/projected_newton_diagnostic.py" />
+        <option value="$USER_HOME$/Documents/Python Scripts/test_script.py" />
+        <option value="$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/SIMP.py" />
+        <option value="$PROJECT_DIR$/PFAS-examples/radialproblem.py" />
+        <option value="$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/cfd_solver.py" />
+        <option value="$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/topology_optimization_amstutz_approach.py" />
+        <option value="$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/rotor_optimization_script.py" />
+        <option value="$PROJECT_DIR$/multigrid.py" />
+        <option value="$PROJECT_DIR$/ReducedSpace.py" />
+        <option value="$PROJECT_DIR$/PFAS-examples/elastic-plasictorsion.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/test_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/PFAS-examples/elastic-plasictorsion_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/ReducedSpace_diagnostic.py" />
+        <option value="$USER_HOME$/anaconda3/pkgs/scipy-1.1.0-py27_blas_openblas_200/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py" />
+        <option value="$USER_HOME$/anaconda3/pkgs/scipy-0.17.1-np111py35_1/lib/python3.5/site-packages/scipy/sparse/linalg/dsolve/linsolve.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_12.py" />
+        <option value="$USER_HOME$/anaconda3/pkgs/scipy-0.19.1-np113py27_0/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py" />
+        <option value="$USER_HOME$/anaconda3/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py" />
+        <option value="$USER_HOME$/anaconda3/lib/python2.7/site-packages/pyamg/relaxation/relaxation.py" />
+        <option value="$USER_HOME$/anaconda3/lib/python2.7/site-packages/pyamg/amg_core/amg_core.py" />
+        <option value="$USER_HOME$/pyamg/pyamg/relaxation/relaxation.py" />
+        <option value="$USER_HOME$/pyamg/pyamg/amg_core/relaxation.h" />
+        <option value="$USER_HOME$/pyamg/pyamg/amg_core/relaxation_bind.cpp" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/obstacle_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/diagnostics.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/GS_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/grid_transfers_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/Poisson2D_diagnostic.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/multigrid_diagnostic.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_15.py" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/relaxation" />
+        <option value="$PROJECT_DIR$/diagnostic_tools/scratch_12.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1280" />
+    <option name="height" value="800" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Python</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Python</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python&#10;TEXT" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/maxheldman/Obstacle-Problem/multigrid.py" />
+  </component>
+  <component name="PyDebuggerOptionsProvider">
+    <option name="mySupportQtDebugging" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$USER_HOME$/Documents/Python Scripts" />
+      <recent name="$PROJECT_DIR$/" />
+      <recent name="$PROJECT_DIR$/multigrid-examples" />
+      <recent name="$PROJECT_DIR$/PFAS-examples" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.Poisson2D_diagnostic">
+    <configuration name="GS_diagnostic" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/diagnostic_tools" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/diagnostic_tools/GS_diagnostic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="Poisson2D_diagnostic" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/diagnostic_tools" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/diagnostic_tools/Poisson2D_diagnostic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="grid_transfers_diagnostic" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/diagnostic_tools" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/diagnostic_tools/grid_transfers_diagnostic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="linsolve" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/anaconda3/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/anaconda3/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="relaxation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/pyamg/pyamg/relaxation" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/pyamg/pyamg/relaxation/relaxation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="scratch (1)" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Poisson2D.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Poisson2D.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="test_script (5)" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6BBBA5B4-15FB-4D31-B2A0-222C05DED36F" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Obstacle-Problem" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6BBBA5B4-15FB-4D31-B2A0-222C05DED36F/test_script.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <list size="8">
+      <item index="0" class="java.lang.String" itemvalue="Python.test_script (5)" />
+      <item index="1" class="java.lang.String" itemvalue="Python.scratch" />
+      <item index="2" class="java.lang.String" itemvalue="Python.scratch (1)" />
+      <item index="3" class="java.lang.String" itemvalue="Python.GS_diagnostic" />
+      <item index="4" class="java.lang.String" itemvalue="Python.linsolve" />
+      <item index="5" class="java.lang.String" itemvalue="Python.relaxation" />
+      <item index="6" class="java.lang.String" itemvalue="Python.grid_transfers_diagnostic" />
+      <item index="7" class="java.lang.String" itemvalue="Python.Poisson2D_diagnostic" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.Poisson2D_diagnostic" />
+        <item index="1" class="java.lang.String" itemvalue="Python.grid_transfers_diagnostic" />
+        <item index="2" class="java.lang.String" itemvalue="Python.GS_diagnostic" />
+        <item index="3" class="java.lang.String" itemvalue="Python.relaxation" />
+        <item index="4" class="java.lang.String" itemvalue="Python.linsolve" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bf8b2624-b394-409e-9463-bfa41e75d413" name="Default" comment="" />
+      <created>1506797551251</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1506797551251</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Gauss-Seidel w/obstacle problem">
+      <created>1506834379790</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1506834379790</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37421876" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933334" sideWeight="0.503125" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32933334" sideWeight="0.496875" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.8718396" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5915493" sideWeight="0.7109375" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.07511737" sideWeight="0.49375" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Gauss-Seidel w/obstacle problem" />
+    <option name="LAST_COMMIT_MESSAGE" value="Gauss-Seidel w/obstacle problem" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/2A998A73-75C5-4D72-B7EE-804A88545CBF/test_script.py</url>
+          <line>134</line>
+          <option name="temporary" value="true" />
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/2A998A73-75C5-4D72-B7EE-804A88545CBF/test_script.py</url>
+          <line>139</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="55" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6EADDE60-B438-436C-8011-B34BDFB36E00/test_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1394">
+          <caret line="252" column="28" lean-forward="false" selection-start-line="252" selection-start-column="28" selection-end-line="252" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/1D399887-1A4B-4FD6-968F-B709FAC841C1/test_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3540">
+          <caret line="240" column="9" lean-forward="true" selection-start-line="240" selection-start-column="9" selection-end-line="240" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/dolfin/compilemodules/jit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="81" column="29" lean-forward="false" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Containers/com.apple.mail/Data/Library/Mail Downloads/6BBBA5B4-15FB-4D31-B2A0-222C05DED36F/test_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="17" column="20" lean-forward="true" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23415">
+          <caret line="1598" column="0" lean-forward="false" selection-start-line="1598" selection-start-column="0" selection-end-line="1598" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-964">
+          <caret line="0" column="36" lean-forward="false" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/projected_newton_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="50" column="72" lean-forward="false" selection-start-line="50" selection-start-column="72" selection-end-line="50" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Documents/Python Scripts/test_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="71" column="78" lean-forward="true" selection-start-line="71" selection-start-column="78" selection-end-line="71" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/scratch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="21" column="29" lean-forward="false" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/genetic_algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/SIMP.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/cylinder_flow_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="31" column="35" lean-forward="false" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/cfd_solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="48" column="26" lean-forward="false" selection-start-line="48" selection-start-column="26" selection-end-line="48" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/topology_optimization_amstutz_approach.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="95" column="36" lean-forward="false" selection-start-line="95" selection-start-column="36" selection-end-line="95" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PFAS-examples/radialproblem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/multigrid.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="185" column="108" lean-forward="false" selection-start-line="185" selection-start-column="108" selection-end-line="185" selection-end-column="108" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ReducedSpace.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="49" column="40" lean-forward="false" selection-start-line="49" selection-start-column="40" selection-end-line="49" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/PFAS-examples/radialproblem_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="23" column="14" lean-forward="false" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/diagnostics_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="206" column="21" lean-forward="false" selection-start-line="206" selection-start-column="21" selection-end-line="206" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PFAS-examples/elastic-plasictorsion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="25" lean-forward="true" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/PFAS-examples/elastic-plasictorsion_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="35" lean-forward="true" selection-start-line="14" selection-start-column="35" selection-end-line="14" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/test_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-43">
+          <caret line="174" column="100" lean-forward="false" selection-start-line="174" selection-start-column="100" selection-end-line="174" selection-end-column="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/pkgs/scipy-1.1.0-py27_blas_openblas_200/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/iCloud Drive (Archive)/Documents/Python Scripts/rotor_optimization_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="26" column="6" lean-forward="true" selection-start-line="26" selection-start-column="6" selection-end-line="26" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/pkgs/scipy-0.17.1-np111py35_1/lib/python3.5/site-packages/scipy/sparse/linalg/dsolve/linsolve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="716">
+          <caret line="478" column="8" lean-forward="false" selection-start-line="478" selection-start-column="8" selection-end-line="478" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/pkgs/scipy-0.19.1-np113py27_0/lib/python2.7/site-packages/scipy/sparse/linalg/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="3" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/scipy/sparse/lil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="86">
+          <caret line="355" column="0" lean-forward="false" selection-start-line="355" selection-start-column="0" selection-end-line="355" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/ReducedSpace_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="603">
+          <caret line="277" column="34" lean-forward="false" selection-start-line="277" selection-start-column="34" selection-end-line="277" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_12.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="118" lean-forward="false" selection-start-line="12" selection-start-column="118" selection-end-line="12" selection-end-column="118" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/RSP-examples/radialproblem_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#47#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/pyamg/amg_core/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="11" lean-forward="true" selection-start-line="2" selection-start-column="11" selection-end-line="2" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/pyamg/amg_core/amg_core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="361" column="24" lean-forward="false" selection-start-line="361" selection-start-column="24" selection-end-line="361" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/pkgs/scipy-0.17.1-np111py35_1/lib/python3.5/site-packages/scipy/linalg/basic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/pyamg/relaxation/relaxation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-879">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/pkgs/scipy-0.19.1-np113py27_0/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="21" column="52" lean-forward="false" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python2.7/site-packages/scipy/sparse/linalg/dsolve/linsolve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="10" column="64" lean-forward="false" selection-start-line="10" selection-start-column="64" selection-end-line="10" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/pyamg/pyamg/amg_core/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/pyamg/pyamg/amg_core/bindthem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2916">
+          <caret line="50" column="60" lean-forward="false" selection-start-line="50" selection-start-column="60" selection-end-line="50" selection-end-column="60" />
+          <folding>
+            <marker date="1535041086938" expanded="false" signature="55:115" ph="import ..." />
+            <marker date="1535041086938" expanded="true" signature="132:270" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1535041086938" expanded="true" signature="302:1434" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="307:711" ph="&quot;&quot;&quot;Find the comments for a function....&quot;&quot;&quot;" />
+            <marker date="1535041086938" expanded="true" signature="823:1413" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="1462:4919" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="1467:1841" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1535041086938" expanded="true" signature="2081:2281" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="2371:3287" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="2493:2782" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="2834:2998" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="3033:3116" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="3130:3223" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="3468:3687" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="3756:3961" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4068:4224" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4403:4826" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4436:4615" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4629:4804" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4979:8345" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="4984:5256" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1535041086938" expanded="true" signature="5352:5441" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="5724:5849" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="5750:5849" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6064:8230" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6073:6245" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6293:6407" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6340:6407" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6430:6548" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="6708:6978" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="7045:8207" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="7199:7286" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="7317:7405" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="7423:7495" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="7706:7878" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="8052:8156" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="8256:8311" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="8359:10024" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="9456:9576" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="9656:9750" ph="..." />
+            <marker date="1535041086938" expanded="true" signature="9786:10024" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/pyamg/pyamg/amg_core/relaxation.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1338">
+          <caret line="11" column="45" lean-forward="false" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/pyamg/pyamg/relaxation/relaxation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="13" column="59" lean-forward="false" selection-start-line="13" selection-start-column="59" selection-end-line="13" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/pyamg/pyamg/amg_core/relaxation_bind.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="23" lean-forward="false" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="12" lean-forward="true" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/grid_transfers_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="22" column="36" lean-forward="false" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/Poisson2D_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="24" column="31" lean-forward="false" selection-start-line="24" selection-start-column="31" selection-end-line="24" selection-end-column="31" />
+          <folding>
+            <element signature="e#1#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/obstacle_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/GS_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="32" column="31" lean-forward="false" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/multigrid_diagnostic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="339">
+          <caret line="475" column="44" lean-forward="false" selection-start-line="475" selection-start-column="44" selection-end-line="475" selection-end-column="44" />
+          <folding>
+            <element signature="e#25#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_15.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/diagnostics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6960">
+          <caret line="464" column="17" lean-forward="true" selection-start-line="464" selection-start-column="17" selection-end-line="464" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/relaxation">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="441">
+          <caret line="49" column="11" lean-forward="false" selection-start-line="49" selection-start-column="11" selection-end-line="49" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/diagnostic_tools/scratch_12.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#384#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
