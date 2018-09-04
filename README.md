@@ -1,6 +1,6 @@
 Library of obstacle problem solvers including multigrid-based methods. Most of the library is written in Python using scipy.sparse, while the smoothers for the multigrid methods use extension modules written in C++. While not parallel, the multigrid-based projected full-approximation scheme method ([1]) implemented here is able to handle some example problems with over ten million unknowns in only a couple minutes. 
 
-To install, just run `sudo python setup.py install`
+To install, just run `sudo python setup.py install`.
 
 Note that there is a problem with the extension module installation which requires the user to add the location of the extension pfas_core to the Python path. This can be done by writing `export PYTHONPATH=.`, where `.` is the path to your pfas_core extension in your installation of obstacle. For example, if your obstacle package was installed using anaconda3 your path might look like `~/anaconda3/lib/python2.7/site-packages/(egg name)/obstacle/pfas_core`.
 
