@@ -2,9 +2,9 @@ Library of solvers for the discrete obstacle problem, which can be formulated as
 
 Find u in R^N such that
 
-              -Au >= f
-               u  >=  psi
-(Au + f)(u - psi) = 0,
+                        -Au >= f
+                         u  >=  psi
+          (Au + f)(u - psi) = 0,
 
 where A is a discretization of the Laplacian on an N-point grid and f is an N-vector.
                
