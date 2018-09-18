@@ -1,14 +1,13 @@
 Library of solvers for the discrete obstacle problem, which can be formulated as the following linear complementarity problem:
 
-Find u in R^N such that
+Find `u` in `R^N` such that
 
                         -Au >= f
                          u  >=  psi
           (Au + f)(u - psi) = 0,
 
-where A is a discretization of the Laplacian on an N-point grid and f is an N-vector.
+where `A` is a discretization of the Laplacian on an `N`-point grid and `f` is an `N`-vector.
                
-
 The solvers have a particular focus on multigrid methods, which are known to be efficient for solving elliptic PDEs like the Poisson equation. While not yet parallel, the multigrid-based projected full-approximation scheme method ([1]) implementation here is able to quickly solve some example problems with millions or ten of millions of unknowns on a desktop computer. 
 
 Most of the library is written in Python using `scipy.sparse`, while the smoothers for the multigrid methods use extension modules written in `C++`. The code dealing with the setup, compilation, and installation of the extension modules is mostly borrowed from the library of algebraic multigrid solvers `pyamg` ([2]). 
