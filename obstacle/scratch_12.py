@@ -1,3 +1,4 @@
+from obstacle.multigrid import *
 from obstacle.diagnostics import *
 import cProfile
 import matplotlib.pyplot as plt
