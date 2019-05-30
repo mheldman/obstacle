@@ -6,11 +6,10 @@ Home-page: https://github.com/mheldman/obstacle
 Author: Max Heldman
 Author-email: mheldman1@gmail.com
 License: UNKNOWN
-Description-Content-Type: UNKNOWN
 Description: 
         Add comments
         
-Keywords: elliptic pde obstacle problem linear complementarity problem variational inequality
+Keywords: elliptic pde poisson laplace obstacle problem linear complementarity problem variational inequality
 Platform: Windows
 Platform: Linux
 Platform: Solaris

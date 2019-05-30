@@ -5,19 +5,20 @@ import numpy as np
 import re
 import scipy as sp
 
+from .multigrid import linear_pfas_solver
+from .reduced_space import rspmethod_lcp_solver, multilevel_rsp_solver
+from .obstacle_problem import box_obstacle_problem
 from .version import git_revision as __git_revision__
 from .version import version as __version__
-
-from .obstacle import box_obstacle_problem
-from .Poisson2D import poisson2d, rhs
-from .multigrid import linear_pfas_solver, multigrid_solver
-from .GS import gs, pgs
+#from .GS import gs, pgs
 
 import warnings
 
-__all__ = [__git_revision__, __version__,
-           box_obstacle_problem, poisson2d, rhs,
-           linear_pfas_solver, multigrid_solver, gs, pgs]
+
+
+
+
+__all__ = [__git_revision__, __version__]
 
 __all__ = [s for s in dir() if not s.startswith('_')]
 __all__ += ['test', '__version__']

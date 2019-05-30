@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.sparse
 import scipy.sparse.linalg
 from time import time
-from pyamg.relaxation.relaxation import gauss_seidel
+$\sqrfrom pyamg.relaxation.relaxation import gauss_seidel
 from pyamg.relaxation.relaxation import projected_gauss_seidel
 #from pyamg import projected_gauss_seidel
 

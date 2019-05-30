@@ -4,14 +4,17 @@
 Add comments
 """
 
+import io
 import os
 import sys
 import subprocess
+from shutil import rmtree
 
 import setuptools
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from setuptools.command.test import test as TestCommand
+from setuptools import find_packages, setup, Command
 
 version = '0.0.1'
 isreleased = True
@@ -144,7 +147,9 @@ def cpp_flag(compiler):
 
     The c++14 is prefered over c++11 (when it is available).
     """
-    if has_flag(compiler, '-std=c++14'):
+    if has_flag(compiler, 'std=c++17'):
+        return '-std=c++14'
+    elif has_flag(compiler, '-std=c++14'):
         return '-std=c++14'
     elif has_flag(compiler, '-std=c++11'):
         return '-std=c++11'
@@ -214,10 +219,47 @@ ext_modules = [Extension('obstacle.pfas_core.%s' % f,
                          language='c++') for f in pfas_core_headers]
 
 
+class UploadCommand(Command):
+  """Support setup.py upload."""
+    
+  description = 'Build and publish the package.'
+  user_options = []
+  
+  @staticmethod
+  def status(s):
+    """Prints things in bold."""
+    print('\033[1m{0}\033[0m'.format(s))
+  
+  def initialize_options(self):
+    pass
+  
+  def finalize_options(self):
+    pass
+  
+  def run(self):
+    try:
+      self.status('Removing previous builds…')
+      rmtree(os.path.join(here, 'dist'))
+    except OSError:
+      pass
+    
+    self.status('Building Source and Wheel (universal) distribution…')
+    os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+    
+    self.status('Uploading the package to PyPI via Twine…')
+    os.system('twine upload dist/*')
+    
+    self.status('Pushing git tags…')
+    os.system('git tag v{0}'.format(about['__version__']))
+    os.system('git push --tags')
+
+    sys.exit()
+
+
 setup(
     name='obstacle',
     version=fullversion,
-    keywords=['elliptic pde obstacle problem linear complementarity problem variational inequality'],
+    keywords=['elliptic pde poisson laplace obstacle problem linear complementarity problem variational inequality'],
     author='Max Heldman',
     author_email='mheldman1@gmail.com',
     maintainer='Max Heldman',

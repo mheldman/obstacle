@@ -4,7 +4,7 @@ from warnings import warn
 
 import numpy as np
 from scipy import sparse
-from obstacle import pfas_core
+import obstacle.pfas_core as pfas_core
 
 __all__ = ['gauss_seidel', 'projected_gauss_seidel']
 
@@ -113,7 +113,7 @@ def gauss_seidel(A, x, b, iterations=1, sweep='forward'):
                                       x, b, row_start, row_stop, row_step, R)
 
 def projected_gauss_seidel(A, x, b, iterations=1, sweep='forward'):
-    """Perform Gauss-Seidel iteration on the linear system Ax=b.
+  """Perform projected Gauss-Seidel iteration on the linear system Ax=b.
 
     Parameters
     ----------
@@ -136,35 +136,35 @@ def projected_gauss_seidel(A, x, b, iterations=1, sweep='forward'):
 
 
     """
-    A, x, b = make_system(A, x, b, formats=['csr', 'bsr'])
+  A, x, b = make_system(A, x, b, formats=['csr', 'bsr'])
 
-    if sparse.isspmatrix_csr(A):
-        blocksize = 1
-    else:
-        R, C = A.blocksize
-        if R != C:
-            raise ValueError('BSR blocks must be square')
-        blocksize = R
+  if sparse.isspmatrix_csr(A):
+      blocksize = 1
+  else:
+      R, C = A.blocksize
+      if R != C:
+          raise ValueError('BSR blocks must be square')
+      blocksize = R
 
-    if sweep == 'forward':
-        row_start, row_stop, row_step = 0, int(len(x)/blocksize), 1
-    elif sweep == 'backward':
-        row_start, row_stop, row_step = int(len(x)/blocksize)-1, -1, -1
-    elif sweep == 'symmetric':
-        for iter in range(iterations):
-            gauss_seidel(A, x, b, iterations=1, sweep='forward')
-            gauss_seidel(A, x, b, iterations=1, sweep='backward')
-        return
-    else:
-        raise ValueError("valid sweep directions are 'forward',\
-                          'backward', and 'symmetric'")
+  if sweep == 'forward':
+      row_start, row_stop, row_step = 0, int(len(x)/blocksize), 1
+  elif sweep == 'backward':
+      row_start, row_stop, row_step = int(len(x)/blocksize)-1, -1, -1
+  elif sweep == 'symmetric':
+      for iter in range(iterations):
+          gauss_seidel(A, x, b, iterations=1, sweep='forward')
+          gauss_seidel(A, x, b, iterations=1, sweep='backward')
+      return
+  else:
+      raise ValueError("valid sweep directions are 'forward',\
+                        'backward', and 'symmetric'")
 
-    if sparse.isspmatrix_csr(A):
-        for iter in range(iterations):
-            pfas_core.projected_gauss_seidel(A.indptr, A.indices, A.data, x, b,
-                                  row_start, row_stop, row_step)
-    else:
-        raise TypeError('GS must use csr matrix')
+  if sparse.isspmatrix_csr(A):
+      for iter in range(iterations):
+          pfas_core.projected_gauss_seidel(A.indptr, A.indices, A.data, x, b,
+                                row_start, row_stop, row_step)
+  else:
+      raise TypeError('PGS must use csr matrix')
 
 
 
