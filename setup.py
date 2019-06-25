@@ -210,7 +210,7 @@ class get_pybind_include(object):
         import pybind11
         return pybind11.get_include(self.user)
 
-pfas_core_headers = ['relaxation.h']
+pfas_core_headers = ['relaxation.h', 'monotone_restriction.h']
 pfas_core_headers = [f.replace('.h', '') for f in pfas_core_headers]
 
 ext_modules = [Extension('obstacle.pfas_core.%s' % f,

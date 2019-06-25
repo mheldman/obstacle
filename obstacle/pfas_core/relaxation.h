@@ -92,6 +92,7 @@ void projected_gauss_seidel(const I Ap[], const int Ap_size,
                   const F Ax[], const int Ax_size,
                         F  x[], const int  x_size,
                   const F  b[], const int  b_size,
+                  const F  p[], const int  p_size,
                   const I row_start,
                   const I row_stop,
                   const I row_step)
@@ -112,9 +113,9 @@ void projected_gauss_seidel(const I Ap[], const int Ap_size,
 
         if (diag != (F) 0.0){
             x[i] = (b[i] - rsum)/diag;
-            if(x[i] < 0.0)
+            if(x[i] < p[i])
           {
-              x[i] = 0.0;
+              x[i] = p[i];
           }
         }
     }

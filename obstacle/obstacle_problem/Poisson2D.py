@@ -72,7 +72,7 @@ def rhs(f, mx, my=None, x1=-1.0, x2=1.0, y1=None, y2=None, g = g, bvals = True, 
         X = linspace(x1, x2, mx + 2)
         Y = linspace(y1, y2, my + 2)
         F = zeros(N)
-
+        '''
         if type(f(X[0:2], Y[0:2])) in [int, float] or type(g(X[0:2], Y[0:2])) in [int, float]:
             kk = lambda i, j: j * (mx + 2) + i
             for j in range(0, my + 2):
@@ -92,19 +92,18 @@ def rhs(f, mx, my=None, x1=-1.0, x2=1.0, y1=None, y2=None, g = g, bvals = True, 
                         if i == mx:
                             F[k] -= b*g(X[-1], Y[j])
 
-
-        else:
-            [X, Y] = np.meshgrid(X, Y)
-            X, Y = X.flatten(), Y.flatten()
-            bvalarray = (X == x1) | (X == x2) | (Y == y1) | (Y == y2)
-            notbvals = ~bvalarray
-            F[notbvals] = f(X[notbvals], Y[notbvals])
-            F[bvalarray] = g(X[bvalarray], Y[bvalarray])
-            if symmetric:
-              F[abs(X - x1 - hx) < 1e-15] -= g(X[X == x1], Y[X == x1]) / hx**2
-              F[abs(X - x2 + hx) < 1e-15] -= g(X[X == x2], Y[X == x2]) / hx**2
-              F[abs(Y - y1 - hy) < 1e-15] -= g(X[Y == y1], Y[Y == y1]) / hy**2
-              F[abs(Y - y2 + hy) < 1e-15] -= g(X[Y == y2], Y[Y == y2]) / hy**2
+        '''
+        [X, Y] = np.meshgrid(X, Y)
+        X, Y = X.flatten(), Y.flatten()
+        bvalarray = (X == x1) | (X == x2) | (Y == y1) | (Y == y2)
+        notbvals = ~bvalarray
+        F[notbvals] = f(X[notbvals], Y[notbvals])
+        F[bvalarray] = g(X[bvalarray], Y[bvalarray])
+        if symmetric:
+          F[abs(X - x1 - hx) < 1e-15] -= g(X[X == x1], Y[X == x1]) / hx**2
+          F[abs(X - x2 + hx) < 1e-15] -= g(X[X == x2], Y[X == x2]) / hx**2
+          F[abs(Y - y1 - hy) < 1e-15] -= g(X[Y == y1], Y[Y == y1]) / hy**2
+          F[abs(Y - y2 + hy) < 1e-15] -= g(X[Y == y2], Y[Y == y2]) / hy**2
 
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import zeros
-from Poisson2D import poisson2d, rhs
+from .Poisson2D import poisson2d, rhs
 
 __all__ = ['box_obstacle_problem']
 
@@ -50,8 +50,8 @@ class box_obstacle_problem:
           P = psi(X.flatten(), Y.flatten())
           U = np.maximum(-P, zeros(N))
 
-      U[self.bndry_pts] = self.F[self.bndry_pts]
       self.F = self.F - self.A.dot(P)
+      U[self.bndry_pts] = self.F[self.bndry_pts]
       self.U, self.P = U, P
 
   def discretize(self, mx, my):
@@ -69,7 +69,8 @@ class box_obstacle_problem:
 
   def solve(self, obstacle_solver, *args, **kwargs):
       print(self)
-      self.solution = self.P + obstacle_solver(*args, **kwargs)
+      self.U = obstacle_solver(*args, **kwargs)
+      self.solution = self.U + self.P
       return self.solution
 
   def plot_solution(self):
@@ -77,14 +78,47 @@ class box_obstacle_problem:
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
     
-    self.mx, self.my = mx, my
+    mx, my = self.mx, self.my
+    (x1, x2, y1, y2) = self.bounds
+    X, Y = np.arange(0, mx + 2), np.arange(0, my + 2)
+    [X, Y] = np.meshgrid(X, Y)
+    Z = self.solution.reshape((my + 2, mx + 2))
+    P = self.P.reshape((my + 2, mx + 2))
+    fig = plt.figure()
+    ax = Axes3D(fig)
+    ax.plot_surface(X, Y, Z)
+    ax.plot_surface(X, Y, P)
+    plt.show()
+
+  def plot_obstacle(self):
+
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+    
+    mx, my = self.mx, self.my
     (x1, x2, y1, y2) = self.bounds
     X, Y = np.arange(0, mx + 2), np.arange(0, my + 2)
     X, Y = np.meshgrid(X, Y)
-    N = (mx + 2)*(my + 2)
-    Z = self.solution.reshape(N, N)
-    P = self.P.reshape(N, N)
-    Axes3D.plot_surface(X, Y, Z)
-    Axes3D.plot_surface(X, Y, P)
+    Z = self.solution.reshape((my + 2, mx + 2))
+    P = self.P.reshape((my + 2, mx + 2))
+    fig = plt.figure()
+    ax = Axes3D(fig)
+    ax.plot_surface(X, Y, P)
     plt.show()
 
+  def plot_active_set(self):
+  
+    import matplotlib.pyplot as plt
+
+    x1, x2, y1, y2 = self.bounds
+    mx, my = self.mx, self.my
+    Z = self.U.reshape((my + 2, mx + 2))
+    X = np.linspace(x1, x2, mx + 2)
+    Y = np.linspace(y1, y2, my + 2)
+    A, B = np.meshgrid(X, Y)
+    plt.plot(A[[Z < 1e-15]], B[[Z < 1e-15]], 'o', color='k')
+    plt.xlim(x1, x2)
+    plt.ylim(y1, y2)
+    plt.show()
+    plt.pause(2)
+    plt.close('all')

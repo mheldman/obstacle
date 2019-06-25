@@ -3,3 +3,4 @@
 from __future__ import absolute_import
 
 from .relaxation import *
+from .monotone_restriction import *

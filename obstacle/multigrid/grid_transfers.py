@@ -1,4 +1,6 @@
 from scipy import sparse
+import numpy as np
+import obstacle.pfas_core as pfas_core
 
 def interpolate(mx, my):
 
@@ -70,3 +72,8 @@ def restrict_inj(mx, my):
     block_list = [sparse.csr_matrix((P1.data, P1.indices + 2*i*(mx + 2), P1.indptr), shape=(P1.shape[0], N)) for i in range(my_coarse + 2)]
     return sparse.vstack(block_list, format='csr')
 
+def monotone_restrict2d(mx, my, u, u_coarse):
+  mx_coarse = (mx - 1) // 2
+  my_coarse = (my - 1) // 2
+  pfas_core.monotone_restrict_2d(u_coarse, u, mx, my, mx_coarse, my_coarse)
+  return u_coarse

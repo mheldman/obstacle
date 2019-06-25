@@ -1,10 +1,12 @@
-Metadata-Version: 1.1
+Metadata-Version: 1.2
 Name: obstacle
 Version: 0.0.1
 Summary: UNKNOWN
 Home-page: https://github.com/mheldman/obstacle
 Author: Max Heldman
 Author-email: mheldman1@gmail.com
+Maintainer: Max Heldman
+Maintainer-email: mheldman1@gmail.com
 License: UNKNOWN
 Description: 
         Add comments

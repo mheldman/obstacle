@@ -4,6 +4,26 @@ import numpy as np
 from scipy.sparse.linalg import spsolve
 import scipy.sparse
 import matplotlib.pyplot as plt
+from obstacle.reduced_space import rspmethod_lcp_solver
+from grid_transfers import monotone_restrict2d
+import sys, os
+#from obstacle.multigrid import monotone_restrict_2d
+
+old_stdout = sys.stdout
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+# Restore
+def enablePrint():
+    sys.stdout = old_stdout
+
+
+
+def pi(x):
+    y = np.zeros_like(x)
+    y[x > 0] = x[x > 0]
+    return y
+
 
 class multigrid_solver:
     '''
@@ -61,10 +81,11 @@ class multigrid_solver:
             print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
 
         for i in range(smoothing_iters):
-            self.smoother(A, u, b, maxiters=1)
-
+            self.smoother(A, u, b, maxiters=1, bvals=self.level.bndry_pts)
+        
         r = b - A.dot(u)
         coarse_b = R.dot(r)
+
         if lvl < len(self.levels) - 2:
             coarse_u = np.zeros_like(coarse_b)
             if cycle == 'W':
@@ -91,7 +112,8 @@ class multigrid_solver:
         P = self.levels[lvl + 1].P
         u += P.dot(coarse_u)
         for i in range(smoothing_iters):
-            self.smoother(A, u, b)
+            self.smoother(A, u, b, maxiters=1, bvals=self.level.bndry_pts)
+
         self.level = self.levels[lvl]
         if 'show levels' in self.diagnostics:
             print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(
@@ -197,6 +219,7 @@ class level:
         self.hx = (x2 - x1) / (mx + 1)
         self.hy = (y2 - y1) / (my + 1)
         self.bndry_pts = bndry_pts
+        self.obstacle = None
 
 
 def compute_Fomega(x, F):  # merit function (residual) for LCP
@@ -263,20 +286,36 @@ class linear_pfas_solver:
         self.bndry_pts = []
 
     def lvl_solve(self, lvl, u, b, cycle, smoothing_iters=1):
-
+      
         self.level = self.levels[lvl]
         if 'show levels' in self.diagnostics:
             print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
         A = self.level.A
         for i in range(smoothing_iters):
-            self.smoother(A, u, b)
-
-
+            u_new = self.smoother(A, u, b, maxiters=1, bvals=self.level.bndry_pts)
+            if u_new is None:
+              pass
+            #else:
+            #  u = u_new.copy()
+      
         R = self.level.R
         coarse_u = R.dot(u)
         coarse_b = R.dot(b - A.dot(u))
+        #u_temp = coarse_u.copy()
+        #coarse_b[coarse_u < 1e-15] = .25*P.T.dot(b)[coarse_u < 1e-15]
+        #u_temp[coarse_u > 1e-15] = .25*P.T.dot(u)[coarse_u > 1e-15]
+        #u_temp[self.levels[lvl + 1].bndry_pts] = u_temp[self.levels[lvl + 1].bndry_pts]
+        #coarse_u = u_temp
+        #coarse_b[coarse_u < 1e-8] = .25*P.T.dot(b - A.dot(u))[coarse_u < 1e-8]
         coarse_A = self.levels[lvl + 1].A  # needs at least two levels
-        coarse_b = coarse_b + coarse_A.dot(coarse_u)
+        #bndry = self.levels[lvl + 1].bndry_pts
+        #bndry_vec = np.zeros_like(coarse_u)
+        #bndry_vec[bndry] = 1.
+        #I_elim = -scipy.sparse.diags(bndry_vec - 1, 0, shape=coarse_A.shape, format='csr')
+        #I_add = scipy.sparse.diags(bndry_vec, 0, shape=coarse_A.shape, format='csr')
+        #coarse_A = I_elim.dot(coarse_A.dot(I_elim)) + I_add
+
+        coarse_b += coarse_A.dot(coarse_u)
         if lvl < len(self.levels) - 2:
 
             if cycle == 'W':
@@ -302,14 +341,25 @@ class linear_pfas_solver:
         else:
             if 'show levels' in self.diagnostics:
                 print((lvl + 1) * "    " + "Grid " + str(lvl + 1) + ", mx = " + str(self.coarse_mx) + ", my = " + str(
-                    self.coarse_my))
+                  self.coarse_my))
+
             du = 1.0
-            while du > 10 ** -12:
+            #blockPrint()
+            #rs_solver = rspmethod_lcp_solver(coarse_A, coarse_b, 1e-8, 100, self.levels[lvl + 1].bndry_pts, diagnostics=())
+            #coarse_u = rs_solver.solve(self.coarse_mx, my=self.coarse_my, init_iterate=coarse_u)
+            #enablePrint()
+ 
+            while du > 1e-12:
                 uold = coarse_u.copy()
-                self.smoother(coarse_A, coarse_u, coarse_b)
+                u_new = self.smoother(coarse_A, coarse_u, coarse_b, maxiters=1, bvals=self.levels[-1].bndry_pts)
+                if u_new is None:
+                  pass
+                else:
+                  coarse_u = u_new.copy()
                 du = (self.coarse_mx + 1) * np.linalg.norm(uold - coarse_u)
 
         P = self.levels[lvl + 1].P
+        uold = u.copy()
         u += P.dot(coarse_u - R.dot(u))
         self.level = self.levels[lvl]
 
@@ -317,18 +367,22 @@ class linear_pfas_solver:
             print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
 
         for i in range(smoothing_iters):
-            self.smoother(A, u, b)
+            u_new = self.smoother(A, u, b, maxiters=1, bvals=self.level.bndry_pts)
+            if u_new is None:
+              pass
+            else:
+              u = u_new.copy()
+
 
 
     def plot_active_set(self, u):
 
       x1, x2, y1, y2 = self.level.bounds
       mx, my = self.level.mx, self.level.my
-      Z = u.reshape((mx + 2, my + 2))
+      Z = u.reshape((my + 2, mx + 2))
       X = np.linspace(x1, x2, mx + 2)
       Y = np.linspace(y1, y2, my + 2)
       A, B = np.meshgrid(X, Y)
-      A, B = np.transpose(A), np.transpose(B)
       plt.ion()
       plt.plot(A[[Z < 1e-10]], B[[Z < 1e-10]], 'o', color='k')
       plt.xlim(x1, x2)
@@ -342,11 +396,10 @@ class linear_pfas_solver:
       x1, x2, y1, y2 = self.level.bounds
       r = abs(r)
       mx, my = self.level.mx, self.level.my
-      Z = r.reshape((mx + 2, my + 2))
+      Z = r.reshape((my + 2, mx + 2))
       X = np.linspace(x1, x2, mx + 2)
       Y = np.linspace(y1, y2, my + 2)
       A, B = np.meshgrid(X, Y)
-      A, B = np.transpose(A), np.transpose(B)
       ax = plt.scatter(A, B, s=20, c=Z, marker = '.', cmap = 'copper')
       plt.colorbar(ax)
       plt.ion()
@@ -360,7 +413,7 @@ class linear_pfas_solver:
         return np.arange(len(r))[(u < 1e-16) & (r > 0.0)]
 
     def solve(self, b, u0=None, cycle='FV', tol=1e-8, maxiters=400, smoothing_iters=1, accel=None):
-      
+      conv = 0
       if cycle != 'fmg':
         print('pfas solver maxiters: ' + str(maxiters))
         print('pfas solver residual tolerance: ' + str(tol) + '\n')
@@ -407,7 +460,8 @@ class linear_pfas_solver:
         u = np.array(u0)
         u[u < 0.0] = 0.0
         residuals = []
-        r = b - self.level.A.dot(u)
+        Au = self.level.A.dot(u)
+        r = b - Au
         fomega = compute_Fomega(u, r)
         residuals.append(np.linalg.norm(fomega, np.inf))
         z = 0
@@ -424,56 +478,83 @@ class linear_pfas_solver:
         active_set_old = set(self.active_set(u, r))
         active_set_new = active_set_old
         normb = np.linalg.norm(b)
-
-        while residuals[-1] / normb > tol and z < maxiters:
+        Alistcopy = []
         
-            self.lvl_solve(0, u, b, cycle, smoothing_iters=smoothing_iters)
-            z += 1
-            r = b - self.level.A.dot(u)
-            fomega = compute_Fomega(u, r)
-            residuals.append(np.linalg.norm(fomega, np.inf))
+        for i in range(len(self.levels)):
+            Alistcopy.append(self.levels[i].A)
+        bcopy = b.copy()
+        fail = 0
+        while residuals[-1] / normb > tol and z < maxiters:
+          
+          if (z > 1 and residuals[-1]/residuals[-2] > .9) or fail == 1:
+            fail = 1
+          
+            Alist = Alistcopy
+            active_set_vec = np.zeros((self.level.mx + 2) * (self.level.my + 2))
+            active_set_new = list(active_set_new)
+            b[active_set_new] = 0.
+            active_set_vec[active_set_new] = 1
+            '''
+            for i in range(len(self.levels)):
+                self.levels[i].A = Alist[i]
+                I_elim = -scipy.sparse.diags(active_set_vec - 1, 0, shape=self.levels[i].A.shape, format='csr')
+                I_add = scipy.sparse.diags(active_set_vec, 0, shape=self.levels[i].A.shape, format='csr')
+                self.levels[i].A = I_elim.dot(self.levels[i].A.dot(I_elim)) + I_add
+                active_set_vec = self.levels[i].R.dot(active_set_vec)
+          '''
+          self.lvl_solve(0, u, b, cycle, smoothing_iters=smoothing_iters)
+          b = bcopy.copy()
+          for i in range(len(self.levels)):
+            self.levels[i].A = Alistcopy[i]
+          z += 1
+          Au = self.level.A.dot(u)
+          r = b - Au
+          fomega = compute_Fomega(u, r)
+          residuals.append(np.linalg.norm(fomega, np.inf))
 
-            if 'show residuals' in self.diagnostics:
-                print('pfas residual iteration ' + str(z) + ': ' + str(residuals[-1]))
+          if 'show residuals' in self.diagnostics:
+              print('pfas residual iteration ' + str(z) + ': ' + str(residuals[-1]))
 
-            if 'show reduced space' in self.diagnostics:
-                self.plot_active_set(u)
-                
-            if 'residual heat map' in self.diagnostics:
-              self.plot_residual(fomega)
-            
-            active_set_old = active_set_new
-            active_set_new = set(self.active_set(u, r))
-            conv_factor = (residuals[-1] / residuals[0]) ** (1.0 / (len(residuals) - 1.0))
-            
-            if accel == 'rsp':
-              if len(active_set_new) != 0:
-                active_set_change = len(set(active_set_new).symmetric_difference(set(active_set_old)))/len(active_set_new)
-              else:
-                active_set_change = 0.
+          if 'show reduced space' in self.diagnostics:
+              self.plot_active_set(u)
 
-              if z != 0 and (active_set_change < .01 or conv_factor > .3):
-              
-                if conv_factor > .3:
-                  print('stalled convergence.. total convergence factor > .3')
-                  print('switching to reduced space method')
-                else:
-                  print('\n' + 'active set converged to within tolerance. solving BVP...')
-                print('geometric convergence factor PFAS: ' + str(conv_factor) + '\n')
-                break
+          if 'residual heat map' in self.diagnostics:
+            self.plot_residual(fomega)
 
+          active_set_old = active_set_new
+          active_set_new = set(self.active_set(u, r))
+          conv_factor = (residuals[-1] / residuals[0]) ** (1.0 / (len(residuals) - 1.0))
+
+          if accel == 'rsp':
+            if len(active_set_new) != 0:
+              active_set_change = len(set(active_set_new).symmetric_difference(set(active_set_old)))/len(active_set_new)
             else:
-              if z != 0 and (active_set_new == active_set_old):  # z!=0 and residuals[-1]/residuals[-2] > .5:
-                if conv_factor > .75:
-                    print('solver diverged.. convergence factors > .75')
-                else:
-                    print('\n' + 'active set converged. solving BVP...')
-                print('geometric convergence factor PFAS: ' + str(conv_factor) + '\n')
-                break
+              active_set_change = 0.
+
+            if z != 0 and (active_set_change < .01 or conv_factor > .3):
+            
+              if conv_factor > .3:
+                print('stalled convergence.. total convergence factor > .3')
+                print('switching to reduced space method')
+              else:
+                print('\n' + 'active set converged to within tolerance. solving BVP...')
+              print('geometric convergence factor PFAS: ' + str(conv_factor) + '\n')
+              break
+
+          else:
+            if active_set_new == active_set_old:
+              conv += 1
+            if conv > 2:  # z!=0 and residuals[-1]/residuals[-2] > .5:
+              if conv_factor > .75:
+                  print('solver diverged.. convergence factors > .75')
+              else:
+                  print('\n' + 'active set converged. solving BVP...')
+              print('geometric convergence factor PFAS: ' + str(conv_factor) + '\n')
+              break
 
         gmg_called = False
         from obstacle.multigrid.GS import gs
-        while residuals[-1] / residuals[0] > tol and z < maxiters:
+        while residuals[-1] / residuals[0] > np.inf and z < maxiters:
             if gmg_called:
                 active_set_new = self.active_set(u, b1)
             if not gmg_called:
@@ -496,6 +577,8 @@ class linear_pfas_solver:
             gmg_solver = multigrid_solver(self.levels, self.coarse_mx, self.coarse_my, gs, coarse_solver=spsolve)
             print(gmg_solver)
             normb = np.linalg.norm(b)
+            uold = u.copy()
+            fomega_old = compute_Fomega(u, b - Alist[0].dot(u))
             u = gmg_solver.solve(b, u0=u, tol=tol / normb * residuals[0], cycle=cycle, smoothing_iters=smoothing_iters)
             u[u < 0.] = 0.
             b = b1.copy()
@@ -548,7 +631,7 @@ class linear_pfas_solver:
                     Z1[j, i] = 0.0
             X = np.linspace(x1, x2, mx + 2)
             Y = np.linspace(y1, y2, my + 2)
-            A, B = np.meshgrid(Y, X)
+            A, B = np.meshgrid(X, Y)
             fig = plt.figure()
             ax = fig.gca(projection='3d')
             surf1 = ax.plot_surface(A, B, Z, cmap='Greens', vmin=0.0, vmax=5.1, alpha=.4)
@@ -584,6 +667,434 @@ class linear_pfas_solver:
           u = pfas_solver.solve(b, u0=u, cycle='V', smoothing_iters=smoothing_iters, tol=1e-8)
           
         return u
+'''
+def monotone_restrict2d(mx, my, u):
+  import itertools
+  
+  Z = u.reshape((my + 2, mx + 2))
+  mx_coarse = (mx - 1) // 2
+  my_coarse = (my - 1) // 2
+  Z_coarse = np.zeros((my_coarse + 2, mx_coarse + 2))
+  for j in range(my_coarse + 2):
+    for i in range(mx_coarse + 2):
+      if i in [mx_coarse + 1, 0] or j in [my_coarse + 1, 0]:
+        Z_coarse[j][i] = -1.
+      else:
+        indices = itertools.product([2*i-1, 2*i, 2*i+1], [2*j-1, 2*j, 2*j+1])
+        Z_coarse[j][i] = max([Z[index[1]][index[0]] for index in indices])
+  return Z_coarse.flatten()
+'''
+
+
+class monotone_solver:
+    '''
+    Stores the multigrid hierarchy and implements the projected full-approximation scheme (developed in [1]) for the
+    solution of linear complementarity problems arising from free boundary problems. The free-boundary problem should
+    occur on a rectangular region with a discretization in horizontal rows and vertical columns.
+
+    Attributes:
+
+        levels {iterable} : Contains level objects, which store the information for each level
+        coarse_solver {callable} : Exact solver for the coarse grid.
+        Inputs to coarse_solver should have the form (A, x, b, **kwargs)
+        coarse_mx {int} : Number of unknowns in the horizontal direction
+        coarse_my {int} : Number of unknowns in the vectrical direction
+        level {level} : Stores the current level during the multigrid iteration. Initially set to the
+        finest grid.
+        smoother {callable} : Smoother to be used on each grid. Inputs should have the form (A, x, b, **kwargs),
+        where A is a sparse square matrix, x is the current iterate, to be used as the initial guess for the smoother,
+        and b is the right-hand side vector. The system is square with size (self.level.mx + 2)*(self.level.my + 2).
+
+    Methods:
+
+        lvl_solve: Recursively solves the discretized free boundary problem
+        solve: Initializes the system and calls lvl_solve to solve the free boundary problem
+
+    Sources:
+
+    [1] Achi Brandt and Colin W. Cryer. Multigrid algorithms for the solution of linear complementarity problems
+        arising from free boundary problems. Siam Journal on Scientific and Statistical Computing, 4(4):655–684, 1983.
+
+    '''
+
+    def __repr__(self):
+        output = 'Monotone multigrid solver\n'
+        output += 'Number of levels = ' + str(len(self.levels)) + '\n'
+        output += 'Fine grid size (' + str((self.levels[0].mx + 2)) + ' x ' + str((self.levels[0].my + 2)) + ')\n'
+        output += str(self.levels[0].mx * self.levels[0].my) + ' fine grid unknowns\n'
+        output += 'Coarse grid size (' + str((self.coarse_mx + 2)) + ' x ' + str((self.coarse_my + 2)) + ')\n'
+        output += str(self.coarse_mx * self.coarse_my) + ' coarse grid unknown(s)\n'
+        return output
+
+    def __init__(self, levels, coarse_mx, coarse_my, smoother, coarse_solver=None, diagnostics=None):
+
+        self.levels = levels
+        if coarse_solver is None:
+          self.coarse_solver = smoother
+        else:
+          self.coarse_solver = coarse_solver
+        self.coarse_mx = coarse_mx
+        self.coarse_my = coarse_my
+        self.level = self.levels[0]
+        self.smoother = smoother
+        self.mu = .15
+        self.diagnostics = diagnostics
+        self.residuals = []
+        self.bndry_pts = []
+
+    def lvl_solve(self, lvl, u, b, psi, cycle, smoothing_iters=1):
+      
+
+        self.level = self.levels[lvl]
+        if 'show levels' in self.diagnostics:
+            print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
+        A = self.level.A
+        for i in range(smoothing_iters):
+            self.smoother(A, u, b, psi=psi, maxiters=1, sweep='forward')
+
+        R = self.level.R
+        #coarse_u = R.dot(u)
+        coarse_b = R.dot(b - A.dot(u))
+        #psi_fine = psi - u #fine grid defect obstacle
+        #psi_coarse = R.dot(psi_fine)
+        psi_coarse = np.zeros_like(coarse_b)
+        monotone_restrict2d(self.level.mx, self.level.my, psi - u, psi_coarse) #coarse grid defect obstacle
+        coarse_A = self.levels[lvl + 1].A
+        coarse_u = np.zeros_like(coarse_b)
+        
+        if lvl < len(self.levels) - 2:
+
+            if cycle == 'W':
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, cycle)
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, cycle)
+
+            elif cycle == 'V':
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, cycle)
+
+            elif cycle == 'FV':
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, cycle)
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, 'V')
+
+            elif cycle == 'FW':
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse,  'FW')
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse,  'W')
+
+            elif cycle == 'fmgV':
+                coarse_b2 = R.dot(b)
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b2, psi_coarse,'fmgV')
+                self.lvl_solve(lvl + 1, coarse_u, coarse_b, psi_coarse, 'V')
+
+        else:
+            if 'show levels' in self.diagnostics:
+                print((lvl + 1) * "    " + "Grid " + str(lvl + 1) + ", mx = " + str(self.coarse_mx) + ", my = " + str(
+                    self.coarse_my))
+            du = 1.0
+            while du > 10 ** -14:
+                uold = coarse_u.copy()
+                self.smoother(coarse_A, coarse_u, coarse_b, psi=psi, maxiters=1)
+                du = (self.coarse_mx + 1) * np.linalg.norm(uold - coarse_u)
+                
+        P = self.levels[lvl + 1].P
+        u += P.dot(coarse_u) #monotone coarse grid correction
+
+        for i in range(smoothing_iters): #postsmoothing
+            self.smoother(A, u, b, psi=psi, maxiters=1, sweep='forward')
+
+        self.level = self.levels[lvl]
+
+        if 'show levels' in self.diagnostics:
+            print(lvl * "    " + "Grid " + str(lvl) + ", mx = " + str(self.level.mx) + ", my = " + str(self.level.my))
+
+
+
+    def plot_active_set(self, u):
+
+      x1, x2, y1, y2 = self.level.bounds
+      mx, my = self.level.mx, self.level.my
+      Z = u.reshape((my + 2, mx + 2))
+      X = np.linspace(x1, x2, mx + 2)
+      Y = np.linspace(y1, y2, my + 2)
+      A, B = np.meshgrid(X, Y)
+      plt.ion()
+      plt.plot(A[[Z < 1e-10]], B[[Z < 1e-10]], 'o', color='k')
+      plt.xlim(x1, x2)
+      plt.ylim(y1, y2)
+      plt.show()
+      plt.pause(2)
+      plt.close('all')
+
+    def plot_residual(self, r):
+    
+      x1, x2, y1, y2 = self.level.bounds
+      r = abs(r)
+      mx, my = self.level.mx, self.level.my
+      Z = r.reshape((my + 2, mx + 2))
+      X = np.linspace(x1, x2, mx + 2)
+      Y = np.linspace(y1, y2, my + 2)
+      A, B = np.meshgrid(X, Y)
+      ax = plt.scatter(A, B, s=20, c=Z, marker = '.', cmap = 'copper')
+      plt.colorbar(ax)
+      plt.ion()
+      plt.show()
+      plt.pause(2)
+      plt.close('all')
+    
+    
+
+    def active_set(self, u, r):
+        return np.arange(len(r))[(u < 1e-16) & (r > 0.0)]
+
+    def solve(self, b, u0=None, cycle='FV', tol=1e-8, maxiters=400, smoothing_iters=1, accel=None):
+      conv = 0
+      if cycle != 'fmg':
+        print('monotone solver maxiters: ' + str(maxiters))
+        print('monotone solver residual tolerance: ' + str(tol) + '\n')
+        
+        if u0 is None or u0 == 'zero':
+            u0 = np.zeros_like(b)
+            if len(self.levels[0].bndry_pts) == 0:
+                'Warning: zero initial guess with no specified boundary points. Initial guess may not be feasible'
+            else:
+                u0[self.levels[0].bndry_pts] = b[self.levels[0].bndry_pts]
+
+        elif isinstance(u0, type(np.zeros((1,)))):
+            pass
+
+        elif isinstance(u0, str):
+        
+            if u0 == 'spsolve':
+                print('computing monotone initial guess using ' + u0 + '\n')
+                u0 = spsolve(self.level.A, b)
+            
+            elif u0 == 'gmg':
+                print('computing monotone initial guess using ' + u0 + '\n')
+                linear_solver = multigrid_solver(self.levels, self.coarse_mx, self.coarse_my, gs, coarse_solver=spsolve)
+                print(linear_solver)
+                u0 = linear_solver.solve(b, tol=tol * np.sqrt(len(b)))
+            
+            elif u0 == 'gs':
+                print('computing monotone initial guess using ' + u0 + '\n')
+                r0 = np.linalg.norm(b, np.inf)
+                u = np.zeros_like(b)
+                r = r0
+                while r/r0 > tol:
+                    gs(self.level.A, u, b)
+                    r = np.linalg.norm(self.level.A.dot(u) - b)
+            
+            else:
+                print('str option for initial guess not recognized. using u0 = zeros_like(b) or u0 = b' + '\n')
+                if len(self.levels[0].bndry_pts) > 0:
+                    u0 = np.zeros_like(b)
+                    u0[self.levels[0].bndry_pts] = b[self.levels[0].bndry_pts]
+                else:
+                    u0 = b
+
+        u = np.array(u0)
+        u[u < 0.0] = 0.0
+        residuals = []
+        Au = self.level.A.dot(u)
+        r = b - Au
+        fomega = compute_Fomega(u, r)
+        residuals.append(np.linalg.norm(fomega, np.inf))
+        z = 0
+
+        if 'show residuals' in self.diagnostics:
+            print('residual iteration ' + str(z) + ': ' + str(residuals[-1]))
+
+        if 'residual heat map' in self.diagnostics:
+          self.plot_residual(fomega)
+
+        if 'show reduced space' in self.diagnostics:
+          self.plot_active_set(u)
+
+        active_set_old = set(self.active_set(u, r))
+        active_set_new = active_set_old
+        normb = np.linalg.norm(b)
+        Alistcopy = []
+
+        for i in range(len(self.levels)):
+            Alistcopy.append(self.levels[i].A)
+        bcopy = b.copy()
+        fail = 0
+        while residuals[-1] / normb > tol and z < maxiters:
+          '''
+          if (z > 1 and residuals[-1]/residuals[-2] > .9) or fail == 1:
+            fail = 1
+          
+            Alist = Alistcopy
+            active_set_vec = np.zeros((self.level.mx + 2) * (self.level.my + 2))
+            active_set_new = list(active_set_new)
+            active_set_vec[active_set_new] = 1
+          '''
+          self.lvl_solve(0, u, b, np.zeros_like(u), cycle, smoothing_iters=smoothing_iters)
+          b = bcopy.copy()
+          for i in range(len(self.levels)):
+            self.levels[i].A = Alistcopy[i]
+          z += 1
+          Au = self.level.A.dot(u)
+          r = b - Au
+          fomega = compute_Fomega(u, r)
+          residuals.append(np.linalg.norm(fomega, np.inf))
+
+          if 'show residuals' in self.diagnostics:
+              print('residual iteration ' + str(z) + ': ' + str(residuals[-1]))
+
+          if 'show reduced space' in self.diagnostics:
+              self.plot_active_set(u)
+
+          if 'residual heat map' in self.diagnostics:
+            self.plot_residual(fomega)
+
+          active_set_old = active_set_new
+          active_set_new = set(self.active_set(u, r))
+          conv_factor = (residuals[-1] / residuals[0]) ** (1.0 / (len(residuals) - 1.0))
+          '''
+          if accel == 'rsp':
+            if len(active_set_new) != 0:
+              active_set_change = len(set(active_set_new).symmetric_difference(set(active_set_old)))/len(active_set_new)
+            else:
+              active_set_change = 0.
+
+            if z != 0 and (active_set_change < .01 or conv_factor > .3):
+            
+              if conv_factor > .3:
+                print('stalled convergence.. total convergence factor > .3')
+                print('switching to reduced space method')
+              else:
+                print('\n' + 'active set converged to within tolerance. solving BVP...')
+              print('geometric convergence factor: ' + str(conv_factor) + '\n')
+              break
+
+          else:
+            if active_set_new == active_set_old and 0 == 1:
+              conv += 1
+            if conv > 2:  # z!=0 and residuals[-1]/residuals[-2] > .5:
+              if conv_factor > .75:
+                  print('solver diverged.. convergence factors > .75')
+              else:
+                  print('\n' + 'active set converged. solving BVP...')
+              print('geometric convergence factor: ' + str(conv_factor) + '\n')
+              break
+        '''
+        gmg_called = False
+        from obstacle.multigrid.GS import gs
+        '''
+        while residuals[-1] / residuals[0] > tol and z < maxiters:
+            if gmg_called:
+                active_set_new = self.active_set(u, b1)
+            if not gmg_called:
+                b1 = b.copy()
+                Alist = []
+                for i in range(len(self.levels)):
+                    Alist.append(self.levels[i].A.copy())
+            gmg_called = True
+            active_set_vec = np.zeros((self.level.mx + 2) * (self.level.my + 2))
+            active_set_new = list(active_set_new)
+            b[active_set_new] = 0.
+            active_set_vec[active_set_new] = 1
+
+            for i in range(len(self.levels)):
+                self.levels[i].A = Alist[i]
+                I_elim = -scipy.sparse.diags(active_set_vec - 1, 0, shape=self.levels[i].A.shape, format='csr')
+                I_add = scipy.sparse.diags(active_set_vec, 0, shape=self.levels[i].A.shape, format='csr')
+                self.levels[i].A = I_elim.dot(self.levels[i].A.dot(I_elim)) + I_add
+                active_set_vec = self.levels[i].R.dot(active_set_vec)
+            gmg_solver = multigrid_solver(self.levels, self.coarse_mx, self.coarse_my, gs, coarse_solver=spsolve)
+            print(gmg_solver)
+            normb = np.linalg.norm(b)
+            uold = u.copy()
+            fomega_old = compute_Fomega(u, b - Alist[0].dot(u))
+            u = gmg_solver.solve(b, u0=u, tol=tol / normb * residuals[0], cycle=cycle, smoothing_iters=smoothing_iters)
+            u[u < 0.] = 0.
+            b = b1.copy()
+            residuals.append(np.linalg.norm(compute_Fomega(u, b - Alist[0].dot(u)), np.inf))
+            for i in range(len(self.levels)):
+                self.levels[i].A = Alist[i]
+            print('pfas residual iteration ' + str(z) + ': ' + str(residuals[-1]))
+            z += 1
+            if len(gmg_solver.residuals) == 1:
+              break
+        num_pfas = len(residuals) - 1
+        if gmg_called:
+            for i in range(len(gmg_solver.residuals)):
+                residuals = residuals[0:num_pfas] + gmg_solver.residuals
+        else:
+            num_pfas = len(residuals)
+
+        '''
+        
+        num_pfas = len(residuals)
+        print('\n' + 'convergence summary')
+        print('-------------------')
+        # residuals = residuals + residuals_rsp[2:len(residuals_rsp)]
+        for i in range(len(residuals)):
+            if i == 0:
+                print('residual ' + str(i) + ': ' + str(residuals[i]) + ' ' * (
+                22 + len(str(maxiters)) - len(str(residuals[i])) - len(
+                    str(i))) + 'convergence factor 0: ---------------')
+            elif i < num_pfas:
+                print('residual ' + str(i) + ': ' + str(residuals[i]) + ' ' * (
+                22 + len(str(maxiters)) - len(str(residuals[i])) - len(str(i))) \
+                      + 'convergence factor ' + str(i) + ': ' + str(residuals[i] / residuals[i - 1]))
+            elif i > num_pfas:
+                print('gmg residual  ' + str(i - 1) + ': ' + str(residuals[i]) + ' ' * (
+                22 + len(str(maxiters)) - len(str(residuals[i])) - (len(str(i - 1)))) \
+                      + 'convergence factor ' + str(i - 1) + ': ' + str(residuals[i] / residuals[i - 1]))
+
+        self.residuals = residuals
+
+
+
+        if 'show reduced space' in self.diagnostics:
+        
+            mx, my = self.level.mx, self.level.my
+            x1, x2, y1, y2 = self.level.bounds
+            kk = lambda i, j: (self.level.mx + 2) * i + j
+            Z, Z1 = np.zeros((mx + 2, my + 2)), np.zeros((mx + 2, my + 2))
+            for i in range(0, my + 2):
+                for j in range(0, mx + 2):
+                    k = kk(i, j)
+                    Z[j, i] = u[k]
+                    Z1[j, i] = 0.0
+            X = np.linspace(x1, x2, mx + 2)
+            Y = np.linspace(y1, y2, my + 2)
+            A, B = np.meshgrid(Y, X)
+            fig = plt.figure()
+            ax = Axes3D(fig)
+            surf1 = ax.plot_surface(A, B, Z, cmap='Greens', vmin=0.0, vmax=5.1, alpha=.4)
+            surf2 = ax.plot_surface(A, B, Z1, color='b', vmin=0.0, vmax=5.1, alpha=1.0)
+            plt.ioff()
+            plt.show()
+
+        print('aggregate convergence factor: ' + str((residuals[-1] / residuals[0]) ** (1.0 / (len(residuals) - 1.0))))
+        print('residual reduction: ' + str(residuals[-1] / residuals[0]) + '\n')
+        return u
+
+      else:
+
+        blist = [b]
+        for k in range(0, len(self.levels)-1):
+          blist.append(self.levels[k].R.dot(blist[-1]))
+        u = np.zeros_like(blist[-1])
+        bndry = self.levels[-1].bndry_pts
+        u[bndry] = blist[-1][bndry]
+        du = 1.0
+        while du > 1e-12:
+          uold = u.copy()
+          self.smoother(self.levels[-1].A, u, blist[-1])
+          du = (self.coarse_mx + 1) * np.linalg.norm(uold - u)
+        L = len(self.levels)
+        u = self.levels[-1].P.dot(u)
+        for n in range(2, L):
+          pfas_solver = linear_pfas_solver(self.levels[L-1-n:L], self.coarse_mx, self.coarse_my, self.smoother, coarse_solver=self.coarse_solver, diagnostics=self.diagnostics)
+          u = self.levels[-n].P.dot(u)
+          bndry = self.levels[-1-n].bndry_pts
+          b = blist[-1-n]
+          u[bndry] = b[bndry]
+          u = pfas_solver.solve(b, u0=u, cycle='V', smoothing_iters=smoothing_iters, tol=1e-8)
+        
+        return u
+
 
 
 

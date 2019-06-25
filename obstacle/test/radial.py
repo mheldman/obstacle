@@ -1,7 +1,6 @@
 import numpy as np
 
-Alpha = .68026
-Beta = .47152
+rstar = .6979651482
 
 def psi(x, y):
     x = np.array([x])
@@ -12,13 +11,13 @@ def psi(x, y):
     return z[0]
 
 f = lambda x, y: 0.0
-g = lambda x, y: -Alpha * np.log(np.sqrt(x ** 2 + y ** 2)) + Beta
+g = lambda x, y: -rstar ** 2 * np.log(np.sqrt(x ** 2 + y ** 2) / 2.) / np.sqrt(1. - rstar**2)
 x1, x2, y1, y2 = -2.0, 2.0, -2.0, 2.0
 bounds = (x1,x2,y1,y2)
 
 def uexact(x, y):
     r = np.sqrt(x ** 2 + y ** 2)
-    cond1 = (r > .69797)
+    cond1 = (r > rstar)
     cond2 = ~cond1
     Uexact = 0.*x
     Uexact[cond1] = g(x[cond1], y[cond1])

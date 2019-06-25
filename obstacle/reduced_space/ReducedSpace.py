@@ -114,7 +114,7 @@ class rspmethod_lcp_solver:
             beta, sigma, gamma = line_search_params
 
         if init_iterate is not None:
-            self.iterate = rsp_lcp_iterate(pi(init_iterate), A, b, fixed_vals = self.fixed_vals)
+            self.iterate = rsp_lcp_iterate(pi(init_iterate), A, b, fixed_vals=self.fixed_vals)
             self.xk = self.iterate.xk
             xk = self.xk
         
@@ -141,7 +141,16 @@ class rspmethod_lcp_solver:
                 d = spsolve(gradF_active, -F_active)
             
             elif linear_solver == 'amg':
-                d = pyamg.solve(gradF_active, -F_active, x0=xk[Ik], verb=True, tol=1e-12)
+                currenterr = self.iterate.error
+                mls = pyamg.smoothed_aggregation_solver(gradF_active, B=None)
+                residuals=[]
+                tol=1e-10*origerr/currenterr
+                d = mls.solve(-F_active, tol=tol, residuals=residuals)
+                print('\nksp convergence history:')
+                for i in range(len(residuals)):
+                  print('residual ' + str(i + 1) + ': ' + str(residuals[i]))
+                print('\n')
+
             
             elif linear_solver == 'cg':
               from scipy.sparse.linalg import cg
@@ -208,8 +217,9 @@ class rspmethod_lcp_solver:
             self.iterate.line_search_time = time() - tstart
             self.iterate.alpha = alpha
             self.iterate.line_search_fail = fail
-            self.xk = pi(xk + alpha*d)
-            xk = self.xk
+            xk = pi(xk + alpha*d)
+            self.xk = xk
+
             self.iterates.append(self.iterate)
             self.iterate = rsp_lcp_iterate(self.xk, A, b, fixed_vals=self.fixed_vals)
             self.num_iterations += 1

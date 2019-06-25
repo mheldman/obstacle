@@ -7,3 +7,9 @@ instantiate:
   functions:
     - gauss_seidel
     - projected_gauss_seidel
+
+- types:
+  - [int, float]
+  - [int, double]
+  functions:
+    - monotone_restrict_2d

@@ -50,6 +50,7 @@ void _projected_gauss_seidel(
       py::array_t<F> & Ax,
        py::array_t<F> & x,
        py::array_t<F> & b,
+       py::array_t<F> & p,
         const I row_start,
          const I row_stop,
          const I row_step
@@ -60,11 +61,13 @@ void _projected_gauss_seidel(
     auto py_Ax = Ax.unchecked();
     auto py_x = x.mutable_unchecked();
     auto py_b = b.unchecked();
+    auto py_p = p.unchecked();
     const I *_Ap = py_Ap.data();
     const I *_Aj = py_Aj.data();
     const F *_Ax = py_Ax.data();
     F *_x = py_x.mutable_data();
     const F *_b = py_b.data();
+    const F *_p = py_p.data();
 
     return projected_gauss_seidel<I, T, F>(
                       _Ap, Ap.shape(0),
@@ -72,6 +75,7 @@ void _projected_gauss_seidel(
                       _Ax, Ax.shape(0),
                        _x, x.shape(0),
                        _b, b.shape(0),
+                       _p, p.shape(0),
                 row_start,
                  row_stop,
                  row_step
@@ -126,13 +130,13 @@ Perform one iteration of Gauss-Seidel relaxation on the linear
      Nothing, x will be modified in place)pbdoc");
 
     m.def("projected_gauss_seidel", &_projected_gauss_seidel<int, float, float>,
-        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
+        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("p").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
     m.def("projected_gauss_seidel", &_projected_gauss_seidel<int, double, double>,
-        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
+        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("p").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
     m.def("projected_gauss_seidel", &_projected_gauss_seidel<int, std::complex<float>, float>,
-        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
+        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("p").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"));
     m.def("projected_gauss_seidel", &_projected_gauss_seidel<int, std::complex<double>, double>,
-        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"),
+        py::arg("Ap").noconvert(), py::arg("Aj").noconvert(), py::arg("Ax").noconvert(), py::arg("x").noconvert(), py::arg("b").noconvert(), py::arg("p").noconvert(), py::arg("row_start"), py::arg("row_stop"), py::arg("row_step"),
 R"pbdoc(
 )pbdoc");
 

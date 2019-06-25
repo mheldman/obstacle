@@ -18,6 +18,7 @@ obstacle/multigrid/GS.py
 obstacle/multigrid/__init__.py
 obstacle/multigrid/grid_transfers.py
 obstacle/multigrid/multigrid.py
+obstacle/multigrid/rs_smoother.py
 obstacle/obstacle_problem/Poisson2D.py
 obstacle/obstacle_problem/PoissonExample.py
 obstacle/obstacle_problem/PoissonExample2.py
@@ -26,6 +27,8 @@ obstacle/obstacle_problem/obstacleex.py
 obstacle/obstacle_problem/obstaclep.py
 obstacle/pfas_core/__init__.py
 obstacle/pfas_core/bindthem.py
+obstacle/pfas_core/monotone_restriction.h
+obstacle/pfas_core/monotone_restriction_bind.cpp
 obstacle/pfas_core/relaxation.h
 obstacle/pfas_core/relaxation_bind.cpp
 obstacle/reduced_space/ReducedSpace.py
@@ -35,11 +38,11 @@ obstacle/relaxation/info.py
 obstacle/relaxation/relaxation.py
 obstacle/test/__init__.py
 obstacle/test/dam.py
-obstacle/test/dam_example.py
-obstacle/test/diagnostics copy 2.py
-obstacle/test/diagnostics copy 3.py
-obstacle/test/diagnostics.py
+obstacle/test/degenerate.py
 obstacle/test/elasto.py
-obstacle/test/old_test.py
+obstacle/test/monotone_restriction.py
+obstacle/test/pgs_smoothing.py
 obstacle/test/radial.py
+obstacle/test/spiral.py
+obstacle/test/spiral_smoothing.py
 obstacle/test/test.py
