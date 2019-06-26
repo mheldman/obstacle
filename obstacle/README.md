@@ -1,1 +1,1 @@
-Library of obstacle problem solvers including multigrid-based methods. Most of the library is written in Python using scipy.sparse, while the smoothers for the multigrid methods run in C++.
+Library of obstacle problem solvers including multigrid-based methods. Most of the library is implemented using scipy.sparse, while the smoothers for the multigrid methods and nonlinear grid transfer operations run in C++.
